@@ -1,6 +1,10 @@
 package webrequest
 
-import "time"
+import (
+	"time"
+
+	"github.com/golang-jwt/jwt/v5"
+)
 
 type UserCreateRequest struct {
 	Name string `validate:"required,min=3,max=100" json:"name"`
@@ -19,6 +23,9 @@ type UserLoginRequest struct {
 }
 
 type UserGenereteToken struct {
+	
 	Id int	`json:"id"`
 	Email string `json:"email"`
+	Level string `json:"level"`
+	jwt.RegisteredClaims
 }

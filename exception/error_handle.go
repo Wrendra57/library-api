@@ -109,7 +109,7 @@ func customEror(writer http.ResponseWriter, request *http.Request, err interface
 func internalServerError(writer http.ResponseWriter, request *http.Request, err interface{}) {
 	writer.Header().Set("Content-Type", "application/json")
 	writer.WriteHeader(http.StatusInternalServerError)
-
+	fmt.Println("err")
 	webResponse := webresponse.ResponseApi{
 		Code:   http.StatusInternalServerError,
 		Status: "INTERNAL SERVER ERROR",

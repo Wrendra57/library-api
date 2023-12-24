@@ -87,4 +87,73 @@ func (s *UserServiceImpl) CreateUser(ctx context.Context, request webrequest.Use
 	return helper.ToUserResponse(user)
 }
 
+func(s *UserServiceImpl) Login(ctx context.Context, request webrequest.UserLoginRequest )webresponse.LoginResponse {
+	fmt.Println("service jalan")
+	err:= s.Validate.Struct(request)
+	helper.PanicIfError(err)
+
+	tx, err := s.DB.Begin()
+	helper.PanicIfError(err)
+	defer helper.CommitOrRollback(tx)
+
+	
+	// find user by email
+	getUser, err := s.UserRepository.FindByEmail(ctx, tx,request.Email)
+	if err != nil {
+		panic(exception.CustomEror{Code:400,Error:"email " + request.Email+" not found"})
+	}
+	fmt.Println(getUser)
+
+	// compare password 
+	comparePassword := helper.ComparePassword(request.Password, getUser.Password)
+
+	if !comparePassword {
+		panic(exception.CustomEror{Code:400,Error:"password not match "})
+	}
+	fmt.Println(comparePassword)
+
+	toString:= webrequest.UserGenereteToken{
+		Id: getUser.User_id,
+		Email: getUser.Email,
+		Level: getUser.Level,
+	}
+	generateToken,err := helper.GenerateJWT(toString)
+	helper.PanicIfError(err)
+	fmt.Println(generateToken)
+
+	token := webresponse.LoginResponse{
+		Token: generateToken,
+	}
+	return token
+}
+
+func (s *UserServiceImpl) Authenticate(ctx context.Context,id int) webresponse.UserResponse {
+	fmt.Println("service jalan")
+	
+	tx,err:=s.DB.Begin()
+	helper.PanicIfError(err)
+	defer helper.CommitOrRollback(tx)
+
+	getUser, err := s.UserRepository.FindById(ctx, tx, id)
+	if err != nil {
+		panic(exception.CustomEror{Code:400,Error:"user not found"})
+	}
+	fmt.Println(getUser)
+	user := domain.User{
+		Name: getUser.Name,
+		Email: getUser.Email,
+		Level: getUser.Level,
+		Password: getUser.Password,
+		Is_enabled: getUser.Is_enabled,
+		Gender: getUser.Gender,
+		Telp : getUser.Telp,
+		Birthdate :getUser.Birthdate,
+		Address : getUser.Address,
+		Foto : getUser.Foto,
+		Batas :getUser.Batas,
+	}
+
+	return helper.ToUserResponse(user)
+}
+
 

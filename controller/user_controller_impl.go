@@ -23,6 +23,15 @@ func NewUserController(userService service.UserService) UserController {
 	}
 }
 
+type ContextKey string
+
+const (
+	// KeyOne and KeyTwo are keys to access values in the context.
+	Id ContextKey = "id"
+	Email ContextKey = "email"
+	Level ContextKey = "level"
+	Token ContextKey = "token"
+)
 func (controller *UserControllerImpl) Register(writer http.ResponseWriter, request *http.Request, params httprouter.Params){
 	err := request.ParseMultipartForm(10<<20)
 	helper.PanicIfError(err)
@@ -64,5 +73,42 @@ func (controller *UserControllerImpl) Register(writer http.ResponseWriter, reque
 	helper.WriteToResponseBody(writer,webRespone)
 
 
+}
+
+func (controller *UserControllerImpl) Login(writer http.ResponseWriter, request *http.Request, params httprouter.Params){
+
+	loginRequest := webrequest.UserLoginRequest{}
+	helper.ReadFromRequestBody(request, &loginRequest)
+	fmt.Println(loginRequest)
+	userLogin := controller.UserService.Login(request.Context(),loginRequest)
+	
+
+	// userResponse := controller.UserService.CreateUser(request.Context(), loginRequest )
+	webResponse := webresponse.ResponseApi{
+		Code:   200,
+		Status: "OK",
+		Data:   userLogin,
+	}
+	helper.WriteToResponseBody(writer, webResponse)
+}
+
+func (c *UserControllerImpl) Authenticate(writer http.ResponseWriter, request *http.Request, params httprouter.Params){
+ 
+	id, ok := request.Context().Value("id").(int)
+ 
+	if !ok {
+		http.Error(writer, "failed to get valueOne", http.StatusInternalServerError)
+		return
+	}
+	fmt.Println("ff")
+	 
+	getUser := c.UserService.Authenticate(request.Context(), id)
+
+	webResponse := webresponse.ResponseApi{
+		Code:   200,
+		Status: "OK",
+		Data:   getUser,
+	}
+	helper.WriteToResponseBody(writer, webResponse)
 }
 
