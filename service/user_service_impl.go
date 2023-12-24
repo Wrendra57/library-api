@@ -48,6 +48,7 @@ func (s *UserServiceImpl) CreateUser(ctx context.Context, request webrequest.Use
 		fmt.Println("email sama " + getUser.Email)
 		// panic("email sama")
 		// err34 = errors.New("email sama")
+		
 		panic(exception.DuplicateEmailError{Error:"email already exists"})
 	}
 

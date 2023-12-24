@@ -26,7 +26,7 @@ func (r *UserRepositoryImpl) Create(ctx context.Context, tx *sql.Tx, user domain
 	
 	fmt.Println(result)
 	id,err:=result.LastInsertId()
-
+	helper.PanicIfError(err)
 	user.User_id = int(id)
 	return user
 
@@ -42,7 +42,8 @@ func (repository *UserRepositoryImpl) FindByEmail(ctx context.Context, tx *sql.T
 
 	user := domain.User{}
 	if rows.Next() {
-		err := rows.Scan(&user.User_id,&user.Email,&user.Password,&user.Level,&user.Gender, &user.Telp, &user.Birthdate, &user.Address, &user.Foto, &user.Batas,&user.Created_at,&user.Updated_at,&user.Deleted_at)
+		
+		err := rows.Scan(&user.User_id,&user.Name,&user.Email,&user.Password,&user.Level,&user.Is_enabled,&user.Gender, &user.Telp, &user.Birthdate, &user.Address, &user.Foto, &user.Batas,&user.Created_at,&user.Updated_at,&user.Deleted_at)
 		fmt.Println(err)
 		helper.PanicIfError(err)
 		return user, nil

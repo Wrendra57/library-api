@@ -9,7 +9,7 @@ import (
 )
 
 func NewDB() *sql.DB{
-	db,err:=sql.Open("mysql","root:password@tcp(localhost:3306)/library")
+	db,err:=sql.Open("mysql","root:password@tcp(localhost:3306)/library?parseTime=true")
 	helper.PanicIfError(err)
 
 	db.SetMaxIdleConns(5)
