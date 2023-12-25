@@ -81,14 +81,29 @@ func RoleMiddleware(allowedRole string, next httprouter.Handle) httprouter.Handl
 		// Retrieve the parsed token from the request context
 		userRole, ok := r.Context().Value("level").(string)
 		if !ok {
-			http.Error(w, "Unauthorized", http.StatusUnauthorized)
+			fmt.Println("error get role from request context")
+			webResponse := webresponse.ResponseApi{
+			Code:   http.StatusUnauthorized,
+			Status: "unauthorized4",
+			Data:   nil,
+		}
+			helper.WriteToResponseBody(w, webResponse)
 			return
+		}
+
+		if allowedRole=="admin" && userRole == "superadmin" {
+			userRole = "admin"
 		}
 
 		// Check if the user has the required role
 		
 		if userRole != allowedRole {
-			http.Error(w, "Forbidden", http.StatusForbidden)
+			webResponse := webresponse.ResponseApi{
+			Code:   http.StatusUnauthorized,
+			Status: "unauthorized5",
+			Data:   nil,
+		}
+			helper.WriteToResponseBody(w, webResponse)
 			return
 		}
 

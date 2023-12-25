@@ -14,7 +14,11 @@ func NewRouter(userController controller.UserController) *httprouter.Router {
 
 	router.POST("/api/users", userController.Register)
 	router.POST("/api/users/login", userController.Login)
-	router.GET("/api/users", middleware.AuthMiddleware(userController.Authenticate))
+	router.GET("/api/user", middleware.AuthMiddleware(userController.Authenticate))
+	router.GET("/api/users", middleware.AuthMiddleware(middleware.RoleMiddleware("admin", userController.ListAllUsers)))
+	router.PUT("/api/user/:id",  middleware.AuthMiddleware(userController.UpdateUser))
+
+
 
 	// router.GET("/api/user", middleware.AuthMiddleware(userController.Authenticate))
 	// router.GET("/api/users", middleware.AuthMiddleware(middleware.RoleMiddleware("member", userController.Authenticate)))

@@ -19,21 +19,22 @@ import (
 )
 
 type UserServiceImpl struct {
-	UserRepository 	repository.UserRepository
-	DB				*sql.DB
-	Validate		*validator.Validate
-	Cld	*cloudinary.Cloudinary		  		
+	UserRepository repository.UserRepository
+	DB             *sql.DB
+	Validate       *validator.Validate
+	Cld            *cloudinary.Cloudinary
 }
-func NewUserService(userRepository repository.UserRepository, DB *sql.DB, validate *validator.Validate, cld	*cloudinary.Cloudinary) UserService {
+
+func NewUserService(userRepository repository.UserRepository, DB *sql.DB, validate *validator.Validate, cld *cloudinary.Cloudinary) UserService {
 	return &UserServiceImpl{
 		UserRepository: userRepository,
-		DB: DB,
-		Validate: validate,
-		Cld: cld,
+		DB:             DB,
+		Validate:       validate,
+		Cld:            cld,
 	}
 }
 
-func (s *UserServiceImpl) CreateUser(ctx context.Context, request webrequest.UserCreateRequest ) webresponse.UserResponse{
+func (s *UserServiceImpl) CreateUser(ctx context.Context, request webrequest.UserCreateRequest) webresponse.UserResponse {
 	fmt.Println("service jalan")
 	// service
 	err := s.Validate.Struct(request)
@@ -43,25 +44,25 @@ func (s *UserServiceImpl) CreateUser(ctx context.Context, request webrequest.Use
 	helper.PanicIfError(err)
 	defer helper.CommitOrRollback(tx)
 
-	getUser,err:= s.UserRepository.FindByEmail(ctx, tx,request.Email)
+	getUser, err := s.UserRepository.FindByEmail(ctx, tx, request.Email)
 	if err == nil {
 		fmt.Println("email sama " + getUser.Email)
 		// panic("email sama")
 		// err34 = errors.New("email sama")
-		
-		panic(exception.DuplicateEmailError{Error:"email already exists"})
+
+		panic(exception.DuplicateEmailError{Error: "email already exists"})
 	}
 
-	reader :=bytes.NewReader(request.Foto)
+	reader := bytes.NewReader(request.Foto)
 
-	result,err:=s.Cld.Upload.Upload(ctx,reader,uploader.UploadParams{})
+	result, err := s.Cld.Upload.Upload(ctx, reader, uploader.UploadParams{})
 	if err != nil {
 		fmt.Println(err)
 		panic("upload fatal")
-    }
+	}
 	fmt.Println(result.SecureURL)
 
-	hashedPassword,err:=helper.HashPassword(request.Password)
+	hashedPassword, err := helper.HashPassword(request.Password)
 	if err != nil {
 		fmt.Println(err)
 		panic("failed hashing password")
@@ -69,55 +70,54 @@ func (s *UserServiceImpl) CreateUser(ctx context.Context, request webrequest.Use
 	fmt.Println(hashedPassword)
 
 	user := domain.User{
-	Name: request.Name,
-	Email: request.Email,
-	Password: hashedPassword,
-	Level: "member",
-	Is_enabled: true,
-	Gender: request.Gender,
-	Telp : request.Telp,
-	Birthdate :request.Birthdate,
-	Address : request.Address,
-	Foto : result.SecureURL,
-	Batas :3,
+		Name:       request.Name,
+		Email:      request.Email,
+		Password:   hashedPassword,
+		Level:      "member",
+		Is_enabled: true,
+		Gender:     request.Gender,
+		Telp:       request.Telp,
+		Birthdate:  request.Birthdate,
+		Address:    request.Address,
+		Foto:       result.SecureURL,
+		Batas:      3,
 	}
 
-	user = s.UserRepository.Create(ctx,tx,user)
+	user = s.UserRepository.Create(ctx, tx, user)
 
 	return helper.ToUserResponse(user)
 }
 
-func(s *UserServiceImpl) Login(ctx context.Context, request webrequest.UserLoginRequest )webresponse.LoginResponse {
+func (s *UserServiceImpl) Login(ctx context.Context, request webrequest.UserLoginRequest) webresponse.LoginResponse {
 	fmt.Println("service jalan")
-	err:= s.Validate.Struct(request)
+	err := s.Validate.Struct(request)
 	helper.PanicIfError(err)
 
 	tx, err := s.DB.Begin()
 	helper.PanicIfError(err)
 	defer helper.CommitOrRollback(tx)
 
-	
 	// find user by email
-	getUser, err := s.UserRepository.FindByEmail(ctx, tx,request.Email)
+	getUser, err := s.UserRepository.FindByEmail(ctx, tx, request.Email)
 	if err != nil {
-		panic(exception.CustomEror{Code:400,Error:"email " + request.Email+" not found"})
+		panic(exception.CustomEror{Code: 400, Error: "email " + request.Email + " not found"})
 	}
 	fmt.Println(getUser)
 
-	// compare password 
+	// compare password
 	comparePassword := helper.ComparePassword(request.Password, getUser.Password)
 
 	if !comparePassword {
-		panic(exception.CustomEror{Code:400,Error:"password not match "})
+		panic(exception.CustomEror{Code: 400, Error: "password not match "})
 	}
 	fmt.Println(comparePassword)
 
-	toString:= webrequest.UserGenereteToken{
-		Id: getUser.User_id,
+	toString := webrequest.UserGenereteToken{
+		Id:    getUser.User_id,
 		Email: getUser.Email,
 		Level: getUser.Level,
 	}
-	generateToken,err := helper.GenerateJWT(toString)
+	generateToken, err := helper.GenerateJWT(toString)
 	helper.PanicIfError(err)
 	fmt.Println(generateToken)
 
@@ -127,33 +127,77 @@ func(s *UserServiceImpl) Login(ctx context.Context, request webrequest.UserLogin
 	return token
 }
 
-func (s *UserServiceImpl) Authenticate(ctx context.Context,id int) webresponse.UserResponse {
+func (s *UserServiceImpl) Authenticate(ctx context.Context, id int) webresponse.UserResponse {
 	fmt.Println("service jalan")
-	
-	tx,err:=s.DB.Begin()
+
+	tx, err := s.DB.Begin()
 	helper.PanicIfError(err)
 	defer helper.CommitOrRollback(tx)
 
 	getUser, err := s.UserRepository.FindById(ctx, tx, id)
 	if err != nil {
-		panic(exception.CustomEror{Code:400,Error:"user not found"})
+		panic(exception.CustomEror{Code: 400, Error: "user not found"})
 	}
 	fmt.Println(getUser)
 	user := domain.User{
-		Name: getUser.Name,
-		Email: getUser.Email,
-		Level: getUser.Level,
-		Password: getUser.Password,
+		Name:       getUser.Name,
+		Email:      getUser.Email,
+		Level:      getUser.Level,
+		Password:   getUser.Password,
 		Is_enabled: getUser.Is_enabled,
-		Gender: getUser.Gender,
-		Telp : getUser.Telp,
-		Birthdate :getUser.Birthdate,
-		Address : getUser.Address,
-		Foto : getUser.Foto,
-		Batas :getUser.Batas,
+		Gender:     getUser.Gender,
+		Telp:       getUser.Telp,
+		Birthdate:  getUser.Birthdate,
+		Address:    getUser.Address,
+		Foto:       getUser.Foto,
+		Batas:      getUser.Batas,
 	}
 
 	return helper.ToUserResponse(user)
 }
 
+func (s *UserServiceImpl) ListAllUsers(ctx context.Context) []webresponse.UserResponse {
+	fmt.Println("Listing all users")
 
+	tx, err := s.DB.Begin()
+	helper.PanicIfError(err)
+	defer helper.CommitOrRollback(tx)
+
+	getUsers := s.UserRepository.FindAll(ctx, tx)
+
+	return helper.ToUserResponses(getUsers)
+
+}
+
+func (s *UserServiceImpl) UpdateUser(ctx context.Context, request webrequest.UpdateUserRequest, id int) bool {
+	err := s.Validate.Struct(request)
+	helper.PanicIfError(err)
+
+	tx, err := s.DB.Begin()
+	helper.PanicIfError(err)
+	defer helper.CommitOrRollback(tx)
+
+	_, err = s.UserRepository.FindById(ctx, tx, id)
+	// helper.PanicIfError(err)
+	if err != nil {
+		panic(exception.NewNotFoundError(err.Error()))
+	}
+
+	if request.Foto != nil {
+		reader := bytes.NewReader(request.Foto)
+
+		result, err := s.Cld.Upload.Upload(ctx, reader, uploader.UploadParams{})
+		if err != nil {
+			fmt.Println(err)
+			panic("upload fatal")
+		}
+		fmt.Println(result.SecureURL)
+		request.UrlFoto = result.SecureURL
+	}
+
+	update := s.UserRepository.Update(ctx, tx, id, request)
+	fmt.Println(update)
+	// user := domain.User{}
+	// panic("sda")
+	return true
+}
