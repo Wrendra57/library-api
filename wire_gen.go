@@ -27,7 +27,14 @@ func InitializedServer() *http.Server {
 	cloudinary := app.Cloudinary()
 	userService := service.NewUserService(userRepository, db, validate, cloudinary)
 	userController := controller.NewUserController(userService)
-	router := app.NewRouter(userController)
+	bookRepository := repository.NewBookRepository()
+	categoryBookRepository := repository.NewCategoryRepository()
+	authorRepository := repository.NewAuthorRepository()
+	publisherRepository := repository.NewPublisherRepository()
+	rakRepository := repository.NewRakRepository()
+	bookService := service.NewBookService(bookRepository, db, validate, cloudinary, categoryBookRepository, authorRepository, publisherRepository, userRepository, rakRepository)
+	bookController := controller.NewBookController(bookService)
+	router := app.NewRouter(userController, bookController)
 	server := NewServer(router)
 	return server
 }

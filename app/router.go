@@ -9,16 +9,17 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
-func NewRouter(userController controller.UserController) *httprouter.Router {
+func NewRouter(userController controller.UserController, bookController controller.BookController) *httprouter.Router {
 	router := httprouter.New()
 
 	router.POST("/api/users", userController.Register)
 	router.POST("/api/users/login", userController.Login)
 	router.GET("/api/user", middleware.AuthMiddleware(userController.Authenticate))
 	router.GET("/api/users", middleware.AuthMiddleware(middleware.RoleMiddleware("admin", userController.ListAllUsers)))
-	router.PUT("/api/user/:id",  middleware.AuthMiddleware(userController.UpdateUser))
+	router.PUT("/api/user/:id", middleware.AuthMiddleware(userController.UpdateUser))
 
-
+	// Books
+	router.POST("/api/book", middleware.AuthMiddleware(middleware.RoleMiddleware("admin", bookController.CreateBook)))
 
 	// router.GET("/api/user", middleware.AuthMiddleware(userController.Authenticate))
 	// router.GET("/api/users", middleware.AuthMiddleware(middleware.RoleMiddleware("member", userController.Authenticate)))
