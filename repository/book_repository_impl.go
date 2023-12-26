@@ -192,3 +192,65 @@ func (r *BookRepositoryImpl) FindBook(ctx context.Context, tx *sql.Tx, s webrequ
 	return books
 
 }
+
+func (r *BookRepositoryImpl) Update(ctx context.Context, tx *sql.Tx, id int, book domain.Book) int {
+	SQL := "update book set "
+	var args []interface{}
+
+	if book.Title != "" {
+		SQL += "title = ?, "
+		args = append(args, book.Title)
+	}
+	if book.Category_id != 0 {
+		SQL += "category_id = ?, "
+		args = append(args, book.Category_id)
+	}
+	if book.Author_id != 0 {
+		SQL += "author_id = ?, "
+		args = append(args, book.Author_id)
+	}
+	if book.Publisher_id != 0 {
+		SQL += "publisher_id = ?, "
+		args = append(args, book.Publisher_id)
+	}
+	if book.Isbn != "" {
+		SQL += "isbn = ?, "
+		args = append(args, book.Isbn)
+	}
+	if book.Page_count != 0 {
+		SQL += "page_count = ?, "
+		args = append(args, book.Page_count)
+	}
+	if book.Stock != 0 {
+		SQL += "stock = ?, "
+		args = append(args, book.Stock)
+	}
+	if book.Publication_year != 0 {
+		SQL += "publication_year = ?, "
+		args = append(args, book.Publication_year)
+	}
+	if book.Foto != "" {
+		SQL += "foto = ?, "
+		args = append(args, book.Foto)
+	}
+	if book.Rak_id != 0 {
+		SQL += "rak_id = ?, "
+		args = append(args, book.Rak_id)
+	}
+	if book.Price != 0 {
+		SQL += "price = ?, "
+		args = append(args, book.Price)
+	}
+	if book.Admin_id != 0 {
+		SQL += "admin_id = ?, "
+		args = append(args, book.Admin_id)
+	}
+	SQL = SQL[:len(SQL)-2]
+
+	SQL += " WHERE book_id = ?"
+	args = append(args, id)
+	_, err := tx.Exec(SQL, args...)
+	helper.PanicIfError(err)
+
+	return id
+}

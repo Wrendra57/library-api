@@ -9,17 +9,17 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
-func ErrorHandler(writer http.ResponseWriter, request *http.Request, err interface{}){
+func ErrorHandler(writer http.ResponseWriter, request *http.Request, err interface{}) {
 	if validationErrors(writer, request, err) {
 		return
-	} 
-	if duplicateEmailEror(writer, request,err){
+	}
+	if duplicateEmailEror(writer, request, err) {
 		return
 	}
-	if customEror(writer, request,err){
+	if customEror(writer, request, err) {
 		return
 	}
-internalServerError(writer, request, err)
+	internalServerError(writer, request, err)
 }
 
 func customErrorMessage(err validator.FieldError) string {
@@ -35,12 +35,11 @@ func customErrorMessage(err validator.FieldError) string {
 	}
 }
 
-func validationErrors(writer http.ResponseWriter, request *http.Request, err interface{})bool{
+func validationErrors(writer http.ResponseWriter, request *http.Request, err interface{}) bool {
 	_, ok := err.(validator.ValidationErrors)
 	// fmt.Println(exception)
 	if ok {
 
-		
 		writer.Header().Set("Content-Type", "application/json")
 		writer.WriteHeader(http.StatusBadRequest)
 
@@ -50,18 +49,16 @@ func validationErrors(writer http.ResponseWriter, request *http.Request, err int
 			fmt.Println("Error:", customErrorMessage(e))
 
 			webResponse := webresponse.ResponseApi{
-			Code:   http.StatusBadRequest,
-			Status: customErrorMessage(e),
-			Data:   nil,
+				Code:   http.StatusBadRequest,
+				Status: customErrorMessage(e),
+				Data:   nil,
+			}
+			helper.WriteToResponseBody(writer, webResponse)
+			return true
 		}
-		helper.WriteToResponseBody(writer, webResponse)
-		return true
-		}
- 
-		
 
 		return true
-	}else{
+	} else {
 		return false
 	}
 
@@ -88,12 +85,12 @@ func duplicateEmailEror(writer http.ResponseWriter, request *http.Request, err i
 }
 
 func customEror(writer http.ResponseWriter, request *http.Request, err interface{}) bool {
-	exception,ok := err.(CustomEror)
+	exception, ok := err.(CustomEror)
 
 	if ok {
 		writer.Header().Set("Content-Type", "application/json")
 		writer.WriteHeader(exception.Code)
-		
+
 		webResponse := webresponse.ResponseApi{
 			Code:   exception.Code,
 			Status: exception.Error,
@@ -114,8 +111,7 @@ func internalServerError(writer http.ResponseWriter, request *http.Request, err 
 		Code:   http.StatusInternalServerError,
 		Status: "INTERNAL SERVER ERROR",
 		Data:   err,
-		}
-
+	}
 
 	helper.WriteToResponseBody(writer, webResponse)
 }

@@ -8,6 +8,7 @@ import (
 
 	"github.com/be/perpustakaan/exception"
 	"github.com/be/perpustakaan/helper"
+	"github.com/be/perpustakaan/helper/konversi"
 	"github.com/be/perpustakaan/model/webrequest"
 	"github.com/be/perpustakaan/model/webresponse"
 	"github.com/be/perpustakaan/service"
@@ -110,6 +111,75 @@ func (c *BookControllerImpl) SearchBook(writer http.ResponseWriter, request *htt
 		Code:   200,
 		Status: "OK",
 		Data:   book,
+	}
+	helper.WriteToResponseBody(writer, webresponse)
+}
+
+func (c *BookControllerImpl) UpdateBook(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
+	err := request.ParseMultipartForm(10 << 20)
+	helper.PanicIfError(err)
+
+	id := konversi.StrToInt(params.ByName("id"), "book id")
+	// helper.PanicIfError(err)
+
+	fmt.Println("s")
+
+	updateRequest := webrequest.UpdateBookRequest{}
+
+	for key, values := range request.Form {
+		if len(values) > 0 {
+			switch key {
+			case "title":
+				updateRequest.Title = values[0]
+			case "category":
+				updateRequest.Category = values[0]
+			case "author":
+				updateRequest.Author = values[0]
+			case "publisher":
+				updateRequest.Publisher = values[0]
+			case "isbn":
+				updateRequest.Isbn = values[0]
+			case "page_count":
+				updateRequest.Page_count = values[0]
+			case "stock":
+				updateRequest.Stock = values[0]
+			case "publication_year":
+				updateRequest.Publication_year = values[0]
+			case "rak":
+				updateRequest.Rak = values[0]
+			case "column":
+				updateRequest.Column = values[0]
+			case "rows":
+				updateRequest.Rows = values[0]
+			case "price":
+				updateRequest.Price = values[0]
+			}
+		}
+	}
+	// if request.FormFile("")
+	file, _, err := request.FormFile("foto")
+	// fmt.Println(file)
+	if err != nil {
+		fmt.Println("gada file")
+	}
+	// defer file.Close()
+
+	var foto []byte
+
+	if file != nil {
+		fileContents, err := io.ReadAll(file)
+		helper.PanicIfError(err)
+		foto = fileContents
+		defer file.Close()
+	}
+	updateRequest.Foto = foto
+
+	update := c.BookService.UpdateUser(request.Context(), updateRequest, id)
+	
+	webresponse := webresponse.ResponseApi{
+		Code:   200,
+		Status: "OK",
+		Data:   update,
 	}
 	helper.WriteToResponseBody(writer, webresponse)
 }

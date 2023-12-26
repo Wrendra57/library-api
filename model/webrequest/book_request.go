@@ -39,3 +39,20 @@ type SearchBookRequest struct {
 	Limit  int    `json:"limit"`
 	Offset int    `json:"offset"`
 }
+
+type UpdateBookRequest struct {
+	Title            string `validate:"omitempty,min=3,max=255" json:"title"`
+	Category         string `validate:"omitempty,min=2,max=255" json:"category"`
+	Author           string `validate:"omitempty,min=2,max=255" json:"author"`
+	Publisher        string `validate:"omitempty,min=2,max=255" json:"publisher"`
+	Isbn             string `validate:"omitempty,min=2,max=255" json:"isbn"`
+	Page_count       string `validate:"omitempty" json:"page_count"`
+	Stock            string `validate:"omitempty" json:"stock"`
+	Publication_year string `validate:"omitempty" json:"publication_year"`
+	Foto             []byte `validate:"omitempty" json:"foto"`
+	Rak              string `validate:"omitempty" json:"rak"`
+	Column           string `validate:"omitempty" json:"column"`
+	Rows             string `validate:"omitempty" json:"rows"`
+	Price            string `validate:"omitempty" json:"price"`
+	Foto_url         string `validate:"omitempty" json:"foto_url"`
+}
