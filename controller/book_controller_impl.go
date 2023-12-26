@@ -79,3 +79,20 @@ func (c *BookControllerImpl) FindBookById(writer http.ResponseWriter, request *h
 	}
 	helper.WriteToResponseBody(writer, webresponse)
 }
+
+func (c *BookControllerImpl) ListBooks(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
+
+	requestGet := webrequest.FindAllRequest{}
+
+	requestGet.Limit = request.URL.Query().Get("limit")
+	requestGet.Offset = request.URL.Query().Get("offset")
+
+	book := c.BookService.ListBook(request.Context(), requestGet)
+
+	webresponse := webresponse.ResponseApi{
+		Code:   200,
+		Status: "OK",
+		Data:   book,
+	}
+	helper.WriteToResponseBody(writer, webresponse)
+}

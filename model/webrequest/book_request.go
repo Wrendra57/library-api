@@ -16,7 +16,6 @@ type BookCreateRequest struct {
 	Column           string `validate:"required" json:"column"`
 	Rows             string `validate:"required" json:"rows"`
 	Price            string `validate:"required" json:"price"`
-	
 }
 
 type UserCsreateRequests struct {
@@ -28,4 +27,9 @@ type UserCsreateRequests struct {
 	Birthdate time.Time `validate:"required" json:"birthdate"`
 	Address   string    `validate:"required" json:"address"`
 	Foto      []byte    `validate:"required" json:"foto"`
+}
+
+type FindAllRequest struct {
+	Limit  string `json:"limit"`
+	Offset string `json:"offset"`
 }

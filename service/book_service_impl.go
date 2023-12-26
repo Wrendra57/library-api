@@ -208,3 +208,40 @@ func (s *BookServiceImpl) FindBookById(ctx context.Context, id int) webresponse.
 	return getBook
 
 }
+
+func (s *BookServiceImpl) ListBook(ctx context.Context, request webrequest.FindAllRequest) []webresponse.BookResponseComplete {
+	fmt.Println("service list book")
+	// deffault limit
+	limit := 30
+	offset := 0
+	maxLimit := 100
+
+	if request.Limit != "" {
+		res, err := strconv.Atoi(request.Limit)
+		if err == nil {
+			if res > maxLimit {
+				limit = maxLimit
+			} else {
+				limit = res
+			}
+		}
+	}
+	if request.Offset != "" {
+		res, err := strconv.Atoi(request.Offset)
+		if err == nil {
+			if res >= 0 {
+				offset = res
+			}
+		}
+	}
+
+	tx, err := s.DB.Begin()
+	helper.PanicIfError(err)
+	defer helper.CommitOrRollback(tx)
+
+	getBooks := s.BookRepository.ListBook(ctx, tx, limit, offset)
+
+	fmt.Println(getBooks)
+
+	return getBooks
+}

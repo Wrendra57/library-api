@@ -9,5 +9,5 @@ import (
 type BookController interface {
 	CreateBook(writer http.ResponseWriter, request *http.Request, params httprouter.Params)
 	FindBookById(writer http.ResponseWriter, request *http.Request, params httprouter.Params)
-
+	ListBooks(writer http.ResponseWriter, request *http.Request, params httprouter.Params)
 }
