@@ -33,3 +33,9 @@ type FindAllRequest struct {
 	Limit  string `json:"limit"`
 	Offset string `json:"offset"`
 }
+
+type SearchBookRequest struct {
+	Search string `json:"search"`
+	Limit  int    `json:"limit"`
+	Offset int    `json:"offset"`
+}

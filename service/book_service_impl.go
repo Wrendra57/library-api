@@ -245,3 +245,49 @@ func (s *BookServiceImpl) ListBook(ctx context.Context, request webrequest.FindA
 
 	return getBooks
 }
+
+func (s *BookServiceImpl) SearchBook(ctx context.Context, search string, l webrequest.FindAllRequest) []webresponse.BookResponseComplete {
+	fmt.Println("service list book")
+	// deffault limit
+	limit := 30
+	offset := 0
+	maxLimit := 100
+	searched := ""
+
+	if l.Limit != "" {
+		res, err := strconv.Atoi(l.Limit)
+		if err == nil {
+			if res > maxLimit {
+				limit = maxLimit
+			} else {
+				limit = res
+			}
+		}
+	}
+	if l.Offset != "" {
+		res, err := strconv.Atoi(l.Offset)
+		if err == nil {
+			if res >= 0 {
+				offset = res
+			}
+		}
+	}
+	if search != "" {
+		searched = search
+	}
+	req := webrequest.SearchBookRequest{
+		Search: searched,
+		Limit:  limit,
+		Offset: offset,
+	}
+
+	tx, err := s.DB.Begin()
+	helper.PanicIfError(err)
+	defer helper.CommitOrRollback(tx)
+
+	getBooks := s.BookRepository.FindBook(ctx, tx, req)
+
+	fmt.Println(getBooks)
+
+	return getBooks
+}
