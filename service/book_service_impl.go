@@ -191,3 +191,20 @@ func (s *BookServiceImpl) CreateBook(ctx context.Context, request webrequest.Boo
 	sads := webresponse.BookResponse{}
 	return sads
 }
+
+func (s *BookServiceImpl) FindBookById(ctx context.Context, id int) webresponse.BookResponseComplete {
+	fmt.Println("service find book")
+
+	tx, err := s.DB.Begin()
+	helper.PanicIfError(err)
+	defer helper.CommitOrRollback(tx)
+
+	getBook, err := s.BookRepository.FindById(ctx, tx, id)
+	if err != nil {
+		panic(exception.CustomEror{Code: 400, Error: "book not found"})
+	}
+	fmt.Println(getBook)
+
+	return getBook
+
+}

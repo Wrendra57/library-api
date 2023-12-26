@@ -9,4 +9,5 @@ import (
 
 type BookService interface {
 	CreateBook(ctx context.Context, request webrequest.BookCreateRequest) webresponse.BookResponse
+	FindBookById(ctx context.Context, id int) webresponse.BookResponseComplete
 }

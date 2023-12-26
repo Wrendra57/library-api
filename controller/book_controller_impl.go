@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strconv"
 
+	"github.com/be/perpustakaan/exception"
 	"github.com/be/perpustakaan/helper"
 	"github.com/be/perpustakaan/model/webrequest"
 	"github.com/be/perpustakaan/model/webresponse"
@@ -36,7 +38,7 @@ func (c *BookControllerImpl) CreateBook(writer http.ResponseWriter, request *htt
 	createRequest.Page_count = request.FormValue("page_count")
 
 	createRequest.Stock = request.FormValue("stock")
-	createRequest.Publication_year =request.FormValue("publication_year")
+	createRequest.Publication_year = request.FormValue("publication_year")
 	file, _, err := request.FormFile("foto")
 	helper.PanicIfError(err)
 	defer file.Close()
@@ -59,4 +61,21 @@ func (c *BookControllerImpl) CreateBook(writer http.ResponseWriter, request *htt
 	}
 
 	helper.WriteToResponseBody(writer, webRespone)
+}
+
+func (c *BookControllerImpl) FindBookById(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
+	id, err := strconv.Atoi(params.ByName("id"))
+
+	if err != nil {
+		panic(exception.CustomEror{Code: 400, Error: "id must be number"})
+	}
+	fmt.Println("s")
+	book := c.BookService.FindBookById(request.Context(), id)
+
+	webresponse := webresponse.ResponseApi{
+		Code:   200,
+		Status: "OK",
+		Data:   book,
+	}
+	helper.WriteToResponseBody(writer, webresponse)
 }

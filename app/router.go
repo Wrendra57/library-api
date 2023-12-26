@@ -20,7 +20,7 @@ func NewRouter(userController controller.UserController, bookController controll
 
 	// Books
 	router.POST("/api/book", middleware.AuthMiddleware(middleware.RoleMiddleware("admin", bookController.CreateBook)))
-
+	router.GET("/api/book/:id", bookController.FindBookById)
 	// router.GET("/api/user", middleware.AuthMiddleware(userController.Authenticate))
 	// router.GET("/api/users", middleware.AuthMiddleware(middleware.RoleMiddleware("member", userController.Authenticate)))
 
