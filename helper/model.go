@@ -7,6 +7,7 @@ import (
 
 func ToUserResponse(user domain.User) webresponse.UserResponse {
 	return webresponse.UserResponse{
+		User_id:    user.User_id,
 		Name:       user.Name,
 		Email:      user.Email,
 		Level:      user.Level,

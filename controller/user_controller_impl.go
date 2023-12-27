@@ -144,14 +144,19 @@ func (c *UserControllerImpl) UpdateUser(writer http.ResponseWriter, request *htt
 			case "telp":
 				updateRequest.Telp = values[0]
 			case "birthdate":
-				layout := "2006-01-02"
-				parsedTime, err := time.Parse(layout, request.FormValue("birthdate"))
-				if err != nil {
-					fmt.Println("Error:", err)
-					helper.PanicIfError(err)
+				fmt.Println("qq")
+				fmt.Println(values[0])
+				if values[0] != "" {
+
+					layout := "2006-01-02"
+					parsedTime, err := time.Parse(layout, request.FormValue("birthdate"))
+					if err != nil {
+						fmt.Println("Error:", err)
+						helper.PanicIfError(err)
+					}
+					updateRequest.Birthdate.Time = parsedTime
+					updateRequest.Birthdate.Valid = true
 				}
-				updateRequest.Birthdate.Time = parsedTime
-				updateRequest.Birthdate.Valid = true
 			case "address":
 				updateRequest.Address = values[0]
 			case "level":
@@ -199,6 +204,18 @@ func (c *UserControllerImpl) UpdateUser(writer http.ResponseWriter, request *htt
 		Code:   200,
 		Status: "OK",
 		Data:   true,
+	}
+	helper.WriteToResponseBody(writer, webresponse)
+}
+
+func (c *UserControllerImpl) FindUserById(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
+	id := params.ByName("id")
+
+	getUser := c.UserService.FindByid(request.Context(), id)
+	webresponse := webresponse.ResponseApi{
+		Code:   200,
+		Status: "OK",
+		Data:   getUser,
 	}
 	helper.WriteToResponseBody(writer, webresponse)
 }

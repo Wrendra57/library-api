@@ -12,11 +12,12 @@ import (
 func NewRouter(userController controller.UserController, bookController controller.BookController) *httprouter.Router {
 	router := httprouter.New()
 
-	router.POST("/api/users", userController.Register)
+	router.POST("/api/users/register", userController.Register)
 	router.POST("/api/users/login", userController.Login)
 	router.GET("/api/user", middleware.AuthMiddleware(userController.Authenticate))
 	router.GET("/api/users", middleware.AuthMiddleware(middleware.RoleMiddleware("admin", userController.ListAllUsers)))
 	router.PUT("/api/user/:id", middleware.AuthMiddleware(userController.UpdateUser))
+	router.GET("/api/user/:id", middleware.AuthMiddleware(middleware.RoleMiddleware("admin", userController.FindUserById)))
 
 	// Books
 	router.POST("/api/book", middleware.AuthMiddleware(middleware.RoleMiddleware("admin", bookController.CreateBook)))

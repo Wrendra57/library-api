@@ -9,6 +9,7 @@ import (
 	// "github.com/cloudinary/cloudinary-go/api/uploader"
 	"github.com/be/perpustakaan/exception"
 	"github.com/be/perpustakaan/helper"
+	"github.com/be/perpustakaan/helper/konversi"
 	"github.com/be/perpustakaan/model/domain"
 	"github.com/be/perpustakaan/model/webrequest"
 	"github.com/be/perpustakaan/model/webresponse"
@@ -139,21 +140,21 @@ func (s *UserServiceImpl) Authenticate(ctx context.Context, id int) webresponse.
 		panic(exception.CustomEror{Code: 400, Error: "user not found"})
 	}
 	fmt.Println(getUser)
-	user := domain.User{
-		Name:       getUser.Name,
-		Email:      getUser.Email,
-		Level:      getUser.Level,
-		Password:   getUser.Password,
-		Is_enabled: getUser.Is_enabled,
-		Gender:     getUser.Gender,
-		Telp:       getUser.Telp,
-		Birthdate:  getUser.Birthdate,
-		Address:    getUser.Address,
-		Foto:       getUser.Foto,
-		Batas:      getUser.Batas,
-	}
+	// user := domain.User{
+	// 	Name:       getUser.Name,
+	// 	Email:      getUser.Email,
+	// 	Level:      getUser.Level,
+	// 	Password:   getUser.Password,
+	// 	Is_enabled: getUser.Is_enabled,
+	// 	Gender:     getUser.Gender,
+	// 	Telp:       getUser.Telp,
+	// 	Birthdate:  getUser.Birthdate,
+	// 	Address:    getUser.Address,
+	// 	Foto:       getUser.Foto,
+	// 	Batas:      getUser.Batas,
+	// }
 
-	return helper.ToUserResponse(user)
+	return helper.ToUserResponse(getUser)
 }
 
 func (s *UserServiceImpl) ListAllUsers(ctx context.Context) []webresponse.UserResponse {
@@ -200,4 +201,22 @@ func (s *UserServiceImpl) UpdateUser(ctx context.Context, request webrequest.Upd
 	// user := domain.User{}
 	// panic("sda")
 	return true
+}
+
+func (s *UserServiceImpl) FindByid(ctx context.Context, id string) webresponse.UserResponse {
+	fmt.Println("find by id userservice ")
+	idInt := konversi.StrToInt(id, "user id")
+
+	tx, err := s.DB.Begin()
+	helper.PanicIfError(err)
+	defer helper.CommitOrRollback(tx)
+
+	getUser, err := s.UserRepository.FindById(ctx, tx, idInt)
+	if err != nil {
+		panic(exception.CustomEror{Code: 400, Error: "user not found"})
+	}
+	fmt.Println(getUser)
+
+	return helper.ToUserResponse(getUser)
+
 }

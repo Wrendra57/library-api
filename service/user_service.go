@@ -13,5 +13,6 @@ type UserService interface {
 	Authenticate(ctx context.Context, id int) webresponse.UserResponse
 	ListAllUsers(ctx context.Context)[]webresponse.UserResponse
 	UpdateUser(ctx context.Context,request webrequest.UpdateUserRequest, id int) bool
+	FindByid(ctx context.Context, id string)webresponse.UserResponse
 }
 
