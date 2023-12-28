@@ -205,8 +205,148 @@ paths:
                   status:
                     type: string
                   data:
-                    "$ref": "#/components/schemas/User"
+                    "$ref": "#/components/schemas/Book"
+  "/book/{id}":
+    get:
+      summary: get book by id
+      description: get book
+      tags:
+        - Book API
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: book_id
+          schema:
+            type: number
+      responses:
+        '200':
+          description: Success Get Book
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: number
+                  status:
+                    type: string
+                  data:
+                    "$ref": "#/components/schemas/Book"
+  "/books?limit={limit}&offset={offset}":
+    get:
+      summary: Get list Book
+      description: get list book 
+      parameters:
+        - in: path
+          name: limit
+          required: false
+          description: banyak buku
+          schema:
+            type: number
+        - in: path
+          name: offset
+          required: false
+          description: offset buku
+          schema:
+            type: number
+      tags:
+        - Book API
+      responses:
+        '200':
+          description: Success get list book
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: number
+                  status:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/Book"
+  "/books/search?search={search}&limit={limit}&offset={offset}":
+    get:
+      summary: search book
+      description: search book by title / category / author / publisher
+      parameters:
+        - in: path
+          name: limit
+          required: false
+          description: banyak buku
+          schema:
+            type: number
+        - in: path
+          name: offset
+          required: false
+          description: offset buku
+          schema:
+            type: number
+        - in: path
+          name: search
+          required: false
+          description: search
+          schema:
+            type: string
+      tags:
+        - Book API
+      responses:
+        '200':
+          description: Success get search book
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: number
+                  status:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/Book"
+  "/books/{id}":
+    put:
+      summary: update books
+      description: only for member level
+      tags:
+        - Book API
+      security:
+        - BearerAuth: []
       
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: id buku
+          schema:
+            type: number
+      requestBody:
+        required : true
+        content: 
+          multipart/form-data:
+            schema: 
+              allOf:
+                - "$ref": "#/components/schemas/CreateBook" 
+      responses:
+        '200':
+          description: Success update book
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: number
+                  status:
+                    type: string
+                  data: 
+                    type: boolean
+
 components:
   securitySchemes:
     BearerAuth:
@@ -290,10 +430,42 @@ components:
           type: string
         price:
           type: string
-    # Book:
-    #   type: object
-    #   properties:
-        
+    Book:
+      type: object
+      properties: 
+        book_id:
+          type: string
+        title:
+          type: string
+        category:
+          type: string
+        author:
+          type: string
+        publisher:
+          type: string
+        isbn:
+          type: string
+        page_count:
+          type: string
+        stock:
+          type: string
+        publication:
+          type: string
+        foto:
+          type: string
+        rak:
+          type: string
+        column:
+          type: string
+        rows_rak:
+          type: string
+        price:
+          type: string
+        created_at:
+          type: string
+        updated_at:
+          type: string
+       
         
     
         

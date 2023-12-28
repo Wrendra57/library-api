@@ -45,7 +45,7 @@ func NewBookService(bookRepository repository.BookRepository, DB *sql.DB, valida
 	}
 }
 
-func (s *BookServiceImpl) CreateBook(ctx context.Context, request webrequest.BookCreateRequest) webresponse.BookResponse {
+func (s *BookServiceImpl) CreateBook(ctx context.Context, request webrequest.BookCreateRequest) webresponse.BookResponseComplete {
 	fmt.Println("serviceCreate")
 	admin_id, ok := ctx.Value("id").(int)
 
@@ -103,53 +103,23 @@ func (s *BookServiceImpl) CreateBook(ctx context.Context, request webrequest.Boo
 
 	book.Isbn = request.Isbn
 
-	page_count, err := strconv.Atoi(request.Page_count)
-	if err != nil {
-		panic(exception.CustomEror{Code: 400, Error: "page count must number"})
-	}
-	if page_count <= 0 {
-		panic(exception.CustomEror{Code: 400, Error: "page count must greater than zero"})
-	}
+	page_count := konversi.StrToInt(request.Page_count, "page_count")
 	book.Page_count = page_count
 
-	stock, err := strconv.Atoi(request.Stock)
-	if err != nil {
-		panic(exception.CustomEror{Code: 400, Error: "stock must number"})
-	}
-	if stock <= 0 {
-		panic(exception.CustomEror{Code: 400, Error: "stock must greater than zero"})
-	}
+	stock := konversi.StrToInt(request.Stock, "stock")
 	book.Stock = stock
 
-	publisher_year, err := strconv.Atoi(request.Publication_year)
-	if err != nil {
-		panic(exception.CustomEror{Code: 400, Error: "publisher year must number"})
-	}
-	if publisher_year <= 0 {
-		panic(exception.CustomEror{Code: 400, Error: "publisher_year must greater than zero"})
-	}
+	publisher_year := konversi.StrToInt(request.Publication_year, "publication_year")
 	book.Publication_year = publisher_year
 
 	// handle rak
 	rakReq := webrequest.RakByNameRowRequest{
 		Name: request.Rak,
 	}
-	col, err := strconv.Atoi(request.Column)
-	if err != nil {
-		panic(exception.CustomEror{Code: 400, Error: "column must number"})
-	}
-	if col <= 0 {
-		panic(exception.CustomEror{Code: 400, Error: "column must greater than zero"})
-	}
+	col := konversi.StrToInt(request.Column, "column")
 	rakReq.Col = col
 
-	row, err := strconv.Atoi(request.Rows)
-	if err != nil {
-		panic(exception.CustomEror{Code: 400, Error: "Rows must number"})
-	}
-	if col <= 0 {
-		panic(exception.CustomEror{Code: 400, Error: "Rows must greater than zero"})
-	}
+	row := konversi.StrToInt(request.Rows, "rows")
 	rakReq.Rows_rak = row
 
 	rak, err := s.RakRepository.FindByNameColRow(ctx, tx, rakReq)
@@ -164,13 +134,7 @@ func (s *BookServiceImpl) CreateBook(ctx context.Context, request webrequest.Boo
 	fmt.Println("rakk==>", rak)
 	book.Rak_id = rak.Rak_id
 
-	price, err := strconv.Atoi(request.Price)
-	if err != nil {
-		panic(exception.CustomEror{Code: 400, Error: "price must number"})
-	}
-	if stock <= 0 {
-		panic(exception.CustomEror{Code: 400, Error: "price must greater than zero"})
-	}
+	price := konversi.StrToInt(request.Price, "price")
 	book.Price = price
 
 	// handle foto
@@ -189,8 +153,26 @@ func (s *BookServiceImpl) CreateBook(ctx context.Context, request webrequest.Boo
 
 	boks := s.BookRepository.Create(ctx, tx, book)
 	fmt.Println(boks)
-	sads := webresponse.BookResponse{}
-	return sads
+	resp := webresponse.BookResponseComplete{
+		Book_id:          boks.Book_id,
+		Title:            boks.Title,
+		Category:         category.Category,
+		Author:           author.Name,
+		Publisher:        publisher.Name,
+		Isbn:             boks.Isbn,
+		Page_count:       boks.Page_count,
+		Stock:            boks.Stock,
+		Publication_year: boks.Publication_year,
+		Foto:             boks.Foto,
+		Rak:              rakReq.Name,
+		Column:           rakReq.Col,
+		Rows_rak:         rakReq.Rows_rak,
+		Price:            boks.Price,
+		Admin:            user.Name,
+		Created_at:       boks.Created_at,
+		Updated_at:       boks.Updated_at,
+	}
+	return resp
 }
 
 func (s *BookServiceImpl) FindBookById(ctx context.Context, id int) webresponse.BookResponseComplete {
