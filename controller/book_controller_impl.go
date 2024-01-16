@@ -174,12 +174,27 @@ func (c *BookControllerImpl) UpdateBook(writer http.ResponseWriter, request *htt
 	}
 	updateRequest.Foto = foto
 
-	update := c.BookService.UpdateUser(request.Context(), updateRequest, id)
-	
+	update := c.BookService.UpdateBook(request.Context(), updateRequest, id)
+
 	webresponse := webresponse.ResponseApi{
 		Code:   200,
 		Status: "OK",
 		Data:   update,
+	}
+	helper.WriteToResponseBody(writer, webresponse)
+}
+
+func (c *BookControllerImpl) DeleteBook(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
+	id, err := strconv.Atoi(params.ByName("id"))
+	if err != nil {
+		panic(exception.CustomEror{Code: 400, Error: "id must be number"})
+	}
+	deleteBook := c.BookService.DeleteBook(request.Context(), id)
+
+	webresponse := webresponse.ResponseApi{
+		Code:   200,
+		Status: "OK",
+		Data:   deleteBook,
 	}
 	helper.WriteToResponseBody(writer, webresponse)
 }

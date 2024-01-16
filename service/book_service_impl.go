@@ -61,13 +61,13 @@ func (s *BookServiceImpl) CreateBook(ctx context.Context, request webrequest.Boo
 	helper.PanicIfError(err)
 	defer helper.CommitOrRollback(tx)
 
-	book.Title = request.Title
 	// cek user
 	user, err := s.UserRepository.FindById(ctx, tx, admin_id)
 	if err != nil {
 		panic(exception.CustomEror{Code: 400, Error: "user unauthorized"})
 	}
 	book.Admin_id = user.User_id
+	book.Title = request.Title
 
 	// handle category
 	c := domain.Category{}
@@ -275,7 +275,7 @@ func (s *BookServiceImpl) SearchBook(ctx context.Context, search string, l webre
 	return getBooks
 }
 
-func (s *BookServiceImpl) UpdateUser(ctx context.Context, request webrequest.UpdateBookRequest, id int) int {
+func (s *BookServiceImpl) UpdateBook(ctx context.Context, request webrequest.UpdateBookRequest, id int) int {
 	fmt.Println("service update")
 	admin_id, ok := ctx.Value("id").(int)
 
@@ -398,4 +398,30 @@ func (s *BookServiceImpl) UpdateUser(ctx context.Context, request webrequest.Upd
 
 	// panic("sda")
 	return update
+}
+
+func (s *BookServiceImpl) DeleteBook(ctx context.Context, id int) int {
+	fmt.Println("delete book")
+	// admin_id, ok := ctx.Value("id").(int)
+
+	// if !ok {
+	// 	panic(exception.CustomEror{Code: 400, Error: "user not found "})
+	// }
+
+	tx, err := s.DB.Begin()
+	helper.PanicIfError(err)
+	defer helper.CommitOrRollback(tx)
+
+	getBook, err := s.BookRepository.FindById(ctx, tx, id)
+	if err != nil {
+		panic(exception.CustomEror{Code: 400, Error: "book not found"})
+	}
+	fmt.Println(getBook)
+
+	err = s.BookRepository.DeleteBook(ctx, tx, id)
+	if err != nil {
+		panic(exception.CustomEror{Code: 400, Error: "failed delete book"})
+	}
+	return id
+
 }

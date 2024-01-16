@@ -12,4 +12,5 @@ type BookController interface {
 	ListBooks(writer http.ResponseWriter, request *http.Request, params httprouter.Params)
 	SearchBook(writer http.ResponseWriter, request *http.Request, params httprouter.Params)
 	UpdateBook(writer http.ResponseWriter, request *http.Request, params httprouter.Params)
+	DeleteBook(writer http.ResponseWriter, request *http.Request, params httprouter.Params)
 }

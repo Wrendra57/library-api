@@ -100,3 +100,6 @@ CREATE TABLE penalties (
     FOREIGN KEY (loan_id) REFERENCES book_loan(loan_id),
     FOREIGN KEY (admin_id) REFERENCES user(user_id)
 ) engine=InnoDB;
+
+ALTER Table book
+ADD COLUMN deleted_at TIMESTAMP DEFAULT NULL
