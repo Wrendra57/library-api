@@ -12,7 +12,7 @@ import (
 
 func NewServer(router *httprouter.Router) *http.Server {
 	return &http.Server{
-		Addr:    "127.0.0.1:3000",
+		Addr:    "127.0.0.1:8001",
 		Handler: middleware.CORSMiddleware(router),
 	}
 }

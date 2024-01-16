@@ -25,7 +25,7 @@ const (
 type UserCreateRequest struct {
 	Name      string    `validate:"required,min=3,max=100" json:"name"`
 	Email     string    `validate:"required,min=1,max=100,email" json:"email"`
-	Password  string    `validate:"required,min=4,max=100" json:"password"`
+	Password  string    `validate:"required,min=1,max=100" json:"password"`
 	Gender    string    `validate:"required" json:"gender"`
 	Telp      string    `validate:"required" json:"telp"`
 	Birthdate time.Time `validate:"required" json:"birthdate"`
@@ -35,7 +35,7 @@ type UserCreateRequest struct {
 
 type UserLoginRequest struct {
 	Email    string `validate:"required,min=1,max=100,email" json:"email"`
-	Password string `validate:"required,min=4,max=100" json:"password"`
+	Password string `validate:"required,min=1,max=100" json:"password"`
 }
 
 type UserGenereteToken struct {

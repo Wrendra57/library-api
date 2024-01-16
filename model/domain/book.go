@@ -1,6 +1,9 @@
 package domain
 
-import "time"
+import (
+	"database/sql"
+	"time"
+)
 
 type Book struct {
 	Book_id          int
@@ -18,4 +21,5 @@ type Book struct {
 	Admin_id         int
 	Created_at       time.Time
 	Updated_at       time.Time
+	Deleted_at       sql.NullTime
 }

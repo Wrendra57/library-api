@@ -15,4 +15,5 @@ type BookRepository interface {
 	ListBook(ctx context.Context, tx *sql.Tx, limit int, offset int) []webresponse.BookResponseComplete
 	FindBook(ctx context.Context, tx *sql.Tx, search webrequest.SearchBookRequest) []webresponse.BookResponseComplete
 	Update(ctx context.Context, tx *sql.Tx, id int, book domain.Book) int
+	DeleteBook(ctx context.Context, tx *sql.Tx, id int) error
 }

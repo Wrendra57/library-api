@@ -29,6 +29,7 @@ func (r *BookRepositoryImpl) Create(ctx context.Context, tx *sql.Tx, b domain.Bo
 	b.Book_id = int(id)
 	b.Created_at = time.Now()
 	b.Updated_at = time.Now()
+
 	return b
 
 }
@@ -52,7 +53,8 @@ func (r *BookRepositoryImpl) FindById(ctx context.Context, tx *sql.Tx, id int) (
 				b.price,
 				u.name AS admin,
 				b.created_at,
-				b.updated_at
+				b.updated_at,
+				b.deleted_at
 			FROM
 				book b
 			JOIN
@@ -75,7 +77,7 @@ func (r *BookRepositoryImpl) FindById(ctx context.Context, tx *sql.Tx, id int) (
 
 	b := webresponse.BookResponseComplete{}
 	if rows.Next() {
-		err := rows.Scan(&b.Book_id, &b.Title, &b.Category, &b.Author, &b.Publisher, &b.Isbn, &b.Page_count, &b.Stock, &b.Publication_year, &b.Foto, &b.Rak, &b.Column, &b.Rows_rak, &b.Price, &b.Admin, &b.Created_at, &b.Updated_at)
+		err := rows.Scan(&b.Book_id, &b.Title, &b.Category, &b.Author, &b.Publisher, &b.Isbn, &b.Page_count, &b.Stock, &b.Publication_year, &b.Foto, &b.Rak, &b.Column, &b.Rows_rak, &b.Price, &b.Admin, &b.Created_at, &b.Updated_at, &b.Deleted_at)
 
 		helper.PanicIfError(err)
 		return b, nil
@@ -103,7 +105,8 @@ func (r *BookRepositoryImpl) ListBook(ctx context.Context, tx *sql.Tx, limit int
 				b.price,
 				u.name AS admin,
 				b.created_at,
-				b.updated_at
+				b.updated_at,
+				b.deleted_at
 			FROM
 				book b
 			JOIN
@@ -128,7 +131,7 @@ func (r *BookRepositoryImpl) ListBook(ctx context.Context, tx *sql.Tx, limit int
 	for rows.Next() {
 		b := webresponse.BookResponseComplete{}
 
-		err := rows.Scan(&b.Book_id, &b.Title, &b.Category, &b.Author, &b.Publisher, &b.Isbn, &b.Page_count, &b.Stock, &b.Publication_year, &b.Foto, &b.Rak, &b.Column, &b.Rows_rak, &b.Price, &b.Admin, &b.Created_at, &b.Updated_at)
+		err := rows.Scan(&b.Book_id, &b.Title, &b.Category, &b.Author, &b.Publisher, &b.Isbn, &b.Page_count, &b.Stock, &b.Publication_year, &b.Foto, &b.Rak, &b.Column, &b.Rows_rak, &b.Price, &b.Admin, &b.Created_at, &b.Updated_at, &b.Deleted_at)
 		helper.PanicIfError(err)
 		books = append(books, b)
 	}
@@ -154,7 +157,8 @@ func (r *BookRepositoryImpl) FindBook(ctx context.Context, tx *sql.Tx, s webrequ
 				b.price,
 				u.name AS admin,
 				b.created_at,
-				b.updated_at
+				b.updated_at,
+				b.deleted_at
 			FROM
 				book b
 			JOIN
@@ -185,7 +189,7 @@ func (r *BookRepositoryImpl) FindBook(ctx context.Context, tx *sql.Tx, s webrequ
 	for rows.Next() {
 		b := webresponse.BookResponseComplete{}
 
-		err := rows.Scan(&b.Book_id, &b.Title, &b.Category, &b.Author, &b.Publisher, &b.Isbn, &b.Page_count, &b.Stock, &b.Publication_year, &b.Foto, &b.Rak, &b.Column, &b.Rows_rak, &b.Price, &b.Admin, &b.Created_at, &b.Updated_at)
+		err := rows.Scan(&b.Book_id, &b.Title, &b.Category, &b.Author, &b.Publisher, &b.Isbn, &b.Page_count, &b.Stock, &b.Publication_year, &b.Foto, &b.Rak, &b.Column, &b.Rows_rak, &b.Price, &b.Admin, &b.Created_at, &b.Updated_at, &b.Deleted_at)
 		helper.PanicIfError(err)
 		books = append(books, b)
 	}
@@ -253,4 +257,14 @@ func (r *BookRepositoryImpl) Update(ctx context.Context, tx *sql.Tx, id int, boo
 	helper.PanicIfError(err)
 
 	return id
+}
+
+func (r *BookRepositoryImpl) DeleteBook(ctx context.Context, tx *sql.Tx, id int) error {
+	SQL := "update book set deleted_at = ?, admin_id = ? where book_id = ?"
+	_, err := tx.ExecContext(ctx, SQL, time.Now(), ctx.Value("id").(int), id)
+	helper.PanicIfError(err)
+	if err != nil {
+		return err
+	}
+	return nil
 }
