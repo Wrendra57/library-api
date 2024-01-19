@@ -42,7 +42,7 @@ func AuthMiddleware(next httprouter.Handle) httprouter.Handle {
 			fmt.Println("authHeade not has the Bearer prefix")
 			webResponse := webresponse.ResponseApi{
 				Code:   http.StatusUnauthorized,
-				Status: "unauthorized2",
+				Status: "unauthorized",
 				Data:   nil,
 			}
 			helper.WriteToResponseBody(w, webResponse)
@@ -56,11 +56,11 @@ func AuthMiddleware(next httprouter.Handle) httprouter.Handle {
 		result, err := helper.ParseJWT(tokenString)
 
 		if err != nil {
-			fmt.Println("error parsing")
-			fmt.Println(err)
+			fmt.Println("error parsing===>")
+			// fmt.Println(err.Error())
 			webResponse := webresponse.ResponseApi{
 				Code:   http.StatusUnauthorized,
-				Status: "unauthorized3",
+				Status: err.Error(),
 				Data:   nil,
 			}
 			helper.WriteToResponseBody(w, webResponse)
@@ -86,7 +86,7 @@ func RoleMiddleware(allowedRole string, next httprouter.Handle) httprouter.Handl
 			fmt.Println("error get role from request context")
 			webResponse := webresponse.ResponseApi{
 				Code:   http.StatusUnauthorized,
-				Status: "unauthorized4",
+				Status: "unauthorized",
 				Data:   nil,
 			}
 			helper.WriteToResponseBody(w, webResponse)
@@ -102,7 +102,7 @@ func RoleMiddleware(allowedRole string, next httprouter.Handle) httprouter.Handl
 		if userRole != allowedRole {
 			webResponse := webresponse.ResponseApi{
 				Code:   http.StatusUnauthorized,
-				Status: "unauthorized5",
+				Status: "unauthorized",
 				Data:   nil,
 			}
 			helper.WriteToResponseBody(w, webResponse)

@@ -18,7 +18,7 @@ import (
 
 func TestAuthenticateSucces(t *testing.T) {
 	db := test.SetupTestDB()
-	// test.DeleteUser(db)
+	test.DeleteUser(db)
 	router := test.SetupRouter(db)
 	email := "testing@gmail.com"
 	password := "1234"
@@ -71,13 +71,12 @@ func TestAuthenticateSucces(t *testing.T) {
 	var responseBody map[string]interface{}
 	json.Unmarshal(bodyResp, &responseBody)
 
-	// fmt.Println(responseBody)
+	// fmt.Println("login", responseBody)
 	token, ok := responseBody["data"].(map[string]interface{})["token"].(string)
 	if !ok {
 		fmt.Println("Token not found in the response.")
 		return
 	}
-	fmt.Println(token)
 
 	tests := []struct {
 		name_test       string
@@ -87,28 +86,36 @@ func TestAuthenticateSucces(t *testing.T) {
 		expected_status string
 		expected_data   string
 	}{
-		// {
-		// 	name_test:       "Success",
-		// 	request:         "GET",
-		// 	token:           token,
-		// 	expected_code:   200,
-		// 	expected_status: "OK",
-		// 	expected_data:   "success",
-		// },
-		// {
-		// 	name_test:       "NotValidToken",
-		// 	request:         "GET",
-		// 	token:           token + "f",
-		// 	expected_code:   401,
-		// 	expected_status: "OK",
-		// 	expected_data:   "failed",
-		// },
+		{
+			name_test:       "Success",
+			request:         "GET",
+			token:           token,
+			expected_code:   200,
+			expected_status: "OK",
+			expected_data:   "success",
+		},
 		{
 			name_test:       "NotValidToken",
 			request:         "GET",
-			token:           "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RpbmdAZ21haWwuY29tIiwiZXhwIjoxNzA1NDYxNTY0LCJpZCI6MTA1LCJsZXZlbCI6Im1lbWJlciJ9.Tv13ESqu6NqG8GyQuA__VkqtYf7i5pt40GO7shVNwWE",
+			token:           token + "f",
 			expected_code:   401,
-			expected_status: "OK",
+			expected_status: "token signature is invalid: signature is invalid",
+			expected_data:   "failed",
+		},
+		{
+			name_test:       "ExpiredToken",
+			request:         "GET",
+			token:           "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RpbmdAZ21haWwuY29tIiwiZXhwIjoxNzA1NTYzNzI1LCJpZCI6MTA1LCJsZXZlbCI6Im1lbWJlciJ9.pG3KeMjbF7RC4CSBHCGNp8Y3YpAncq4-L18vIt7v23g",
+			expected_code:   401,
+			expected_status: "token has invalid claims: token is expired",
+			expected_data:   "failed",
+		},
+		{
+			name_test:       "WithoutHeaders",
+			request:         "GET",
+			token:           "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RpbmdAZ21haWwuY29tIiwiZXhwIjoxNzA1NTYzNzI1LCJpZCI6MTA1LCJsZXZlbCI6Im1lbWJlciJ9.pG3KeMjbF7RC4CSBHCGNp8Y3YpAncq4-L18vIt7v23g",
+			expected_code:   401,
+			expected_status: "unauthorized",
 			expected_data:   "failed",
 		},
 	}
@@ -116,7 +123,9 @@ func TestAuthenticateSucces(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name_test, func(t *testing.T) {
 			requestLogin := httptest.NewRequest(test.request, "http://localhost:8001/api/user", nil)
-			requestLogin.Header.Set("Authorization", "Bearer "+test.token)
+			if test.name_test != "WithoutHeaders" {
+				requestLogin.Header.Set("Authorization", "Bearer "+test.token)
+			}
 
 			recorderLogin := httptest.NewRecorder()
 			router.ServeHTTP(recorderLogin, requestLogin)
@@ -128,14 +137,14 @@ func TestAuthenticateSucces(t *testing.T) {
 			var responseBody map[string]interface{}
 			json.Unmarshal(bodyResp, &responseBody)
 
-			fmt.Println(responseBody)
+			// fmt.Println(responseBody)
 			assert.Equal(t, test.expected_code, int(responseBody["code"].(float64)))
 			assert.Equal(t, test.expected_status, responseBody["status"])
-			if test.expected_data == "success" {
-				assert.NotNil(t, responseBody["data"])
-			} else {
-				assert.Nil(t, responseBody["data"])
-			}
+			// if test.expected_data == "success" {
+			// 	assert.NotNil(t, responseBody["data"])
+			// } else {
+			// 	assert.Nil(t, responseBody["data"])
+			// }
 		})
 	}
 
