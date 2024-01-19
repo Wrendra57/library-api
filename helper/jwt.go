@@ -36,7 +36,7 @@ func ParseJWT(tokenString string) (*webrequest.UserGenereteToken, error) {
 	token, err := jwt.ParseWithClaims(tokenString, &webrequest.UserGenereteToken{}, func(token *jwt.Token) (interface{}, error) {
 		return []byte(secret), nil
 	})
-
+	fmt.Println(token)
 	if err != nil {
 		fmt.Println("Error parsing with claims:")
 		return &webrequest.UserGenereteToken{}, err
@@ -54,5 +54,6 @@ func ParseJWT(tokenString string) (*webrequest.UserGenereteToken, error) {
 		fmt.Println("err claims")
 		return &webrequest.UserGenereteToken{}, fmt.Errorf("failed to parse custom claims")
 	}
+	fmt.Println(claims)
 	return claims, nil
 }

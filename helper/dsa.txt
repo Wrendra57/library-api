@@ -1,0 +1,85 @@
+package helper
+
+import (
+	"fmt"
+	"os"
+	"time"
+
+	"github.com/be/perpustakaan/model/webrequest"
+	"github.com/golang-jwt/jwt/v5"
+)
+
+func GenerateJWT(user webrequest.UserGenereteToken) (string, error) {
+	claims := jwt.MapClaims{
+		"id":    user.Id,
+		"email": user.Email,
+		"level": user.Level,
+		"exp":   time.Now().Add(time.Hour * 24).Unix(),
+	}
+
+	// claims := &CustomClaims{
+	// 	UserID:   123,
+	// 	Username: "john_doe",
+	// 	StandardClaims: jwt.StandardClaims{
+	// 		ExpiresAt: time.Now().Add(time.Hour * 1).Unix(), // Token expiration time
+	// 	},
+	// }
+	fmt.Println(user)
+	secret := []byte(os.Getenv("SECRET_KEY"))
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+
+	tokenString, err := token.SignedString(secret)
+
+	if err != nil {
+		return "", err
+	}
+	// fmt.Println(tokenString)
+	return tokenString, nil
+}
+
+func ParseJWT(tokenString string) (jwt.MapClaims, error) {
+	// Parse the token
+	secret := os.Getenv("SECRET_KEY")
+	fmt.Println(secret)
+	// token, err := jwt.ParseWithClaims(tokenString, &webrequest.UserGenereteToken{}, func(token *jwt.Token) (interface{}, error) {
+	// 	return []byte(secret), nil
+	// })
+	token, _ := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+		}
+		return []byte(secret), nil
+	})
+	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+		// Access claims
+		// id := claims["id"].(int)
+		// email := claims["email"].(string)
+		fmt.Println(claims)
+		// fmt.Println(id)
+		// fmt.Println(email)
+		return claims, nil
+	} else {
+		// Handle errors
+		fmt.Println("not valid")
+		return nil, fmt.Errorf("invalid token")
+	}
+	// if err != nil {
+	// 	fmt.Println("Error parsing with claims:", err)
+	// 	return &webrequest.UserGenereteToken{}, err
+	// }
+
+	// // Verify the token
+	// if !token.Valid {
+	// 	fmt.Println("Token is not valid")
+	// 	return &webrequest.UserGenereteToken{}, fmt.Errorf("invalid token")
+	// }
+
+	// // Extract custom claims
+	// claims, ok := token.Claims.(*webrequest.UserGenereteToken)
+	// if !ok {
+	// 	fmt.Println("Error extracting claims")
+	// 	return &webrequest.UserGenereteToken{}, fmt.Errorf("failed to parse custom claims")
+	// }
+
+}

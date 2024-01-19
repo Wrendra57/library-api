@@ -54,10 +54,10 @@ func AuthMiddleware(next httprouter.Handle) httprouter.Handle {
 
 		// Parse the token
 		result, err := helper.ParseJWT(tokenString)
-
+		fmt.Println(int(result["id"].(float64)))
+		fmt.Println(result)
 		if err != nil {
 			fmt.Println("error parsing")
-			fmt.Println(err)
 			webResponse := webresponse.ResponseApi{
 				Code:   http.StatusUnauthorized,
 				Status: "unauthorized3",
@@ -69,9 +69,9 @@ func AuthMiddleware(next httprouter.Handle) httprouter.Handle {
 
 		// Attach the parsed token to the request context for later use
 		ctx := context.WithValue(r.Context(), "token", tokenString)
-		ctx = context.WithValue(ctx, "id", result.Id)
-		ctx = context.WithValue(ctx, "email", result.Email)
-		ctx = context.WithValue(ctx, "level", result.Level)
+		ctx = context.WithValue(ctx, "id", int(result["id"].(float64)))
+		ctx = context.WithValue(ctx, "email", result["email"].(string))
+		ctx = context.WithValue(ctx, "level", result["level"].(string))
 
 		next(w, r.WithContext(ctx), p)
 		// next(w, r.WithContext(ctx), p)
