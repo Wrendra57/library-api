@@ -152,7 +152,7 @@ func (s *BookServiceImpl) CreateBook(ctx context.Context, request webrequest.Boo
 	fmt.Print(book)
 
 	boks := s.BookRepository.Create(ctx, tx, book)
-	fmt.Println(boks)
+
 	resp := webresponse.BookResponseComplete{
 		Book_id:          boks.Book_id,
 		Title:            boks.Title,

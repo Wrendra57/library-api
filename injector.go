@@ -25,10 +25,13 @@ func InitializedServer() *http.Server {
 		repository.NewCategoryRepository,
 		repository.NewPublisherRepository,
 		repository.NewRakRepository,
+		repository.NewBookLoanRepository,
 		service.NewUserService,
 		service.NewBookService,
+		service.NewBookLoanService,
 		controller.NewUserController,
 		controller.NewBookController,
+		controller.NewBookLoanController,
 		app.NewRouter,
 		NewServer,
 	)

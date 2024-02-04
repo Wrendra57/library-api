@@ -30,3 +30,18 @@ func ToUserResponses(users []domain.User) []webresponse.UserResponse {
 
 	return userResponses
 }
+
+func ToBookLoanResponse(loan domain.BookLoan) webresponse.BookLoanResponseComplete {
+	return webresponse.BookLoanResponseComplete{
+		Loan_id:       loan.Loan_id,
+		Checkout_date: loan.Checkout_date,
+		Due_date:      loan.Due_date,
+		Return_date:   loan.Return_date,
+		Status:        loan.Status,
+		Book_id:       loan.Book_id,
+		User_id:       loan.User_id,
+		Admin_id:      loan.Admin_id,
+		Created_at:    loan.Created_at,
+		Updated_at:    loan.Updated_at,
+	}
+}

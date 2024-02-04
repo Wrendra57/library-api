@@ -8,5 +8,6 @@ import (
 )
 
 type BookLoanRepository interface {
-	Create(ctx context.Context, tx *sql.Tx, loan domain.Loan) domain.Loan
+	Create(ctx context.Context, tx *sql.Tx, loan domain.BookLoan) domain.BookLoan
+	FindByUserIdBookId(ctx context.Context, tx *sql.Tx, userId int, bookId int) (domain.BookLoan, error)
 }

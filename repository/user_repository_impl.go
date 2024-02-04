@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 	"strconv"
 
 	"github.com/be/perpustakaan/helper"
@@ -132,7 +133,7 @@ func (r *UserRepositoryImpl) Update(ctx context.Context, tx *sql.Tx, id int, use
 		}
 	}
 	if user.Batas != "" {
-		SQL += "level = ?, "
+		SQL += "batas = ?, "
 		number, err := strconv.Atoi(user.Batas)
 		helper.PanicIfError(err)
 		args = append(args, number)
@@ -141,6 +142,7 @@ func (r *UserRepositoryImpl) Update(ctx context.Context, tx *sql.Tx, id int, use
 	SQL += " WHERE user_id = ?"
 	args = append(args, id)
 
+	fmt.Println(SQL)
 	_, err := tx.Exec(SQL, args...)
 	if err != nil {
 		panic(err)

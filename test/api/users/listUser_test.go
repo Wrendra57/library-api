@@ -223,3 +223,25 @@ func TestListUserInvalidToken(t *testing.T) {
 	assert.Equal(t, "token signature is invalid: signature is invalid", responseBody2["status"])
 	assert.Nil(t, responseBody2["data"])
 }
+
+func TestListUserExpiredToken(t *testing.T) {
+	db := test.SetupTestDB()
+	test.DeleteUser(db)
+	router := test.SetupRouter(db)
+
+	requestListUser := httptest.NewRequest(http.MethodGet, "http://localhost:8001/api/users", nil)
+	requestListUser.Header.Set("Authorization", "Bearer "+"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RpbmdAZ21haWwuY29tIiwiZXhwIjoxNzA1NTYzNzI1LCJpZCI6MTA1LCJsZXZlbCI6Im1lbWJlciJ9.pG3KeMjbF7RC4CSBHCGNp8Y3YpAncq4-L18vIt7v23g")
+
+	recorderListUser := httptest.NewRecorder()
+	router.ServeHTTP(recorderListUser, requestListUser)
+
+	responseListUser := recorderListUser.Result()
+
+	bodyResp2, _ := io.ReadAll(responseListUser.Body)
+	var responseBody2 map[string]interface{}
+	json.Unmarshal(bodyResp2, &responseBody2)
+
+	assert.Equal(t, 401, int(responseBody2["code"].(float64)))
+	assert.Equal(t, "token has invalid claims: token is expired", responseBody2["status"])
+	assert.Nil(t, responseBody2["data"])
+}

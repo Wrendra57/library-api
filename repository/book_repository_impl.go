@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/be/perpustakaan/helper"
@@ -198,9 +199,9 @@ func (r *BookRepositoryImpl) FindBook(ctx context.Context, tx *sql.Tx, s webrequ
 }
 
 func (r *BookRepositoryImpl) Update(ctx context.Context, tx *sql.Tx, id int, book domain.Book) int {
-	SQL := "update book set "
+	SQL := "update book set  "
 	var args []interface{}
-
+	fmt.Println(book)
 	if book.Title != "" {
 		SQL += "title = ?, "
 		args = append(args, book.Title)
@@ -225,10 +226,16 @@ func (r *BookRepositoryImpl) Update(ctx context.Context, tx *sql.Tx, id int, boo
 		SQL += "page_count = ?, "
 		args = append(args, book.Page_count)
 	}
-	if book.Stock != 0 {
-		SQL += "stock = ?, "
-		args = append(args, book.Stock)
+	if book.Stock > -1 {
+		if book.UpdateForRent != "" {
+			SQL += "stock = ?, "
+			args = append(args, book.Stock)
+		} else if book.UpdateForRent == "" && book.Stock != 0 {
+			SQL += "stock = ?, "
+			args = append(args, book.Stock)
+		}
 	}
+
 	if book.Publication_year != 0 {
 		SQL += "publication_year = ?, "
 		args = append(args, book.Publication_year)
@@ -250,9 +257,12 @@ func (r *BookRepositoryImpl) Update(ctx context.Context, tx *sql.Tx, id int, boo
 		args = append(args, book.Admin_id)
 	}
 	SQL = SQL[:len(SQL)-2]
+	fmt.Println("1223")
 
 	SQL += " WHERE book_id = ?"
 	args = append(args, id)
+	fmt.Println("122")
+	fmt.Println(SQL)
 	_, err := tx.Exec(SQL, args...)
 	helper.PanicIfError(err)
 

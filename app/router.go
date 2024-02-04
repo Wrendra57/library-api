@@ -9,7 +9,7 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
-func NewRouter(userController controller.UserController, bookController controller.BookController) *httprouter.Router {
+func NewRouter(userController controller.UserController, bookController controller.BookController, bookLoanController controller.BookLoanController) *httprouter.Router {
 	router := httprouter.New()
 
 	router.POST("/api/users/register", userController.Register)
@@ -29,6 +29,8 @@ func NewRouter(userController controller.UserController, bookController controll
 	// router.GET("/api/user", middleware.AuthMiddleware(userController.Authenticate))
 	// router.GET("/api/users", middleware.AuthMiddleware(middleware.RoleMiddleware("member", userController.Authenticate)))
 
+	// Loan
+	router.POST("/api/book/loan", middleware.AuthMiddleware(middleware.RoleMiddleware("admin", bookLoanController.CreateBookLoan)))
 	router.PanicHandler = exception.ErrorHandler
 	return router
 }
