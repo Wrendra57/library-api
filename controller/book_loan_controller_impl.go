@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/be/perpustakaan/exception"
 	"github.com/be/perpustakaan/helper"
 	"github.com/be/perpustakaan/model/webrequest"
 	"github.com/be/perpustakaan/model/webresponse"
@@ -66,6 +67,21 @@ func (c *BookLoanControllerImpl) FindAll(writer http.ResponseWriter, request *ht
 		Code:   200,
 		Status: "OK",
 		Data:   getBookLoan,
+	}
+	helper.WriteToResponseBody(writer, webResponse)
+}
+
+func (c *BookLoanControllerImpl) FindById(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
+	id, err := strconv.Atoi(params.ByName("id"))
+
+	if err != nil {
+		panic(exception.CustomEror{Code: 400, Error: "id must be number"})
+	}
+	bookLoan := c.BookLoanService.FindById(request.Context(), id)
+	webResponse := webresponse.ResponseApi{
+		Code:   200,
+		Status: "OK",
+		Data:   bookLoan,
 	}
 	helper.WriteToResponseBody(writer, webResponse)
 }

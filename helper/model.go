@@ -61,3 +61,36 @@ func ToBookLoanResponseComplete(l domain.BookLoan, b webresponse.BookResponseCom
 		Updated_at:    l.Updated_at,
 	}
 }
+
+func ToDetailBookLoanResponseComplete(bl domain.BookLoan, b webresponse.BookResponseComplete, u domain.User, p domain.Penalties) webresponse.ListBookLoanResponse {
+	book := webresponse.Book{
+		Book_id: b.Book_id,
+		Title:   b.Title,
+		Foto:    b.Foto,
+	}
+	user := webresponse.User{
+		User_id: u.User_id,
+		Name:    u.Name,
+		Foto:    u.Foto,
+	}
+	penalty := webresponse.Penalty{
+		Penalty_id:     p.Penalty_id,
+		Penalty_amount: p.Penalty_amount,
+		Payment_status: p.Payment_status,
+		Due_date:       p.Due_date.String(),
+		Reason:         p.Reason,
+	}
+	return webresponse.ListBookLoanResponse{
+		Loan_id:       bl.Loan_id,
+		Checkout_date: bl.Checkout_date,
+		Due_date:      bl.Due_date,
+		Return_date:   bl.Return_date,
+		Status:        bl.Status,
+		Book:          book,
+		User:          user,
+		Admin_id:      bl.Admin_id,
+		Penalties:     penalty,
+		Created_at:    bl.Created_at,
+		Updated_at:    bl.Updated_at,
+	}
+}

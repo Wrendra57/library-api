@@ -215,3 +215,43 @@ func (s *BookLoanServiceImpl) FindAll(ctx context.Context, request webrequest.Li
 
 	return getList
 }
+
+func (s *BookLoanServiceImpl) FindById(ctx context.Context, id int) webresponse.ListBookLoanResponse {
+	user_id, ok := ctx.Value("id").(int)
+
+	if !ok {
+		panic(exception.CustomEror{Code: 400, Error: "user not found "})
+	}
+
+	level, ok := ctx.Value("level").(string)
+	if !ok {
+		panic(exception.CustomEror{Code: 400, Error: "user not found "})
+	}
+
+	tx, err := s.DB.Begin()
+	helper.PanicIfError(err)
+	defer helper.CommitOrRollback(tx)
+
+	bookLoan, err := s.BookLoanRepository.FindById(ctx, tx, id)
+	helper.PanicIfError(err)
+
+	if level == "member" {
+		if user_id != bookLoan.User_id {
+			panic(exception.CustomEror{Code: 400, Error: "Not restricted access"})
+		}
+	}
+	book, err := s.BookRepository.FindById(ctx, tx, bookLoan.Book_id)
+	helper.PanicIfError(err)
+
+	user, err := s.UserRepository.FindById(ctx, tx, bookLoan.User_id)
+	helper.PanicIfError(err)
+
+	penalty, err := s.Penalties.FindById(ctx, tx, bookLoan.Loan_id)
+	fmt.Println(bookLoan)
+	fmt.Println(book)
+	fmt.Println(user)
+
+	res := helper.ToDetailBookLoanResponseComplete(bookLoan, book, user, penalty)
+	return res
+	// panic("s")
+}
