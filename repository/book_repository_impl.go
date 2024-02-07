@@ -201,7 +201,7 @@ func (r *BookRepositoryImpl) FindBook(ctx context.Context, tx *sql.Tx, s webrequ
 func (r *BookRepositoryImpl) Update(ctx context.Context, tx *sql.Tx, id int, book domain.Book) int {
 	SQL := "update book set  "
 	var args []interface{}
-	fmt.Println(book)
+
 	if book.Title != "" {
 		SQL += "title = ?, "
 		args = append(args, book.Title)

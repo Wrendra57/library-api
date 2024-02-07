@@ -45,3 +45,19 @@ func ToBookLoanResponse(loan domain.BookLoan) webresponse.BookLoanResponseComple
 		Updated_at:    loan.Updated_at,
 	}
 }
+
+func ToBookLoanResponseComplete(l domain.BookLoan, b webresponse.BookResponseComplete, u domain.User, a domain.User, p domain.Penalties) webresponse.BookLoanResponseComplete2 {
+	return webresponse.BookLoanResponseComplete2{
+		Loan_id:       l.Loan_id,
+		Checkout_date: l.Checkout_date,
+		Due_date:      l.Due_date,
+		Return_date:   l.Return_date,
+		Status:        l.Status,
+		Book_id:       b,
+		User_id:       u,
+		Admin_id:      a,
+		Penalties:     p,
+		Created_at:    l.Created_at,
+		Updated_at:    l.Updated_at,
+	}
+}

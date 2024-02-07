@@ -9,4 +9,5 @@ import (
 
 type BookLoanService interface {
 	CreateBookLoan(ctx context.Context, request webrequest.BookLoanCreateRequest) webresponse.BookLoanResponseComplete
+	ReturnBookLoan(ctx context.Context, request webrequest.BookLoanCreateRequest) webresponse.BookLoanResponseComplete2
 }

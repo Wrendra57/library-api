@@ -26,6 +26,7 @@ func InitializedServer() *http.Server {
 		repository.NewPublisherRepository,
 		repository.NewRakRepository,
 		repository.NewBookLoanRepository,
+		repository.NewPenaltiesRepository,
 		service.NewUserService,
 		service.NewBookService,
 		service.NewBookLoanService,

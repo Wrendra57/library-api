@@ -34,3 +34,16 @@ func (c *BookLoanControllerImpl) CreateBookLoan(writer http.ResponseWriter, requ
 	helper.WriteToResponseBody(writer, webResponse)
 
 }
+func (c *BookLoanControllerImpl) ReturnBookLoan(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
+	createBookLoanRequest := webrequest.BookLoanCreateRequest{}
+	helper.ReadFromRequestBody(request, &createBookLoanRequest)
+
+	returnBook := c.BookLoanService.ReturnBookLoan(request.Context(), createBookLoanRequest)
+
+	webResponse := webresponse.ResponseApi{
+		Code:   200,
+		Status: "OK",
+		Data:   returnBook,
+	}
+	helper.WriteToResponseBody(writer, webResponse)
+}
