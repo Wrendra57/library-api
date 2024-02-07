@@ -195,3 +195,23 @@ func (s *BookLoanServiceImpl) ReturnBookLoan(ctx context.Context, request webreq
 	res := helper.ToBookLoanResponseComplete(bookLoan, book, user, admin, penalty)
 	return res
 }
+
+func (s *BookLoanServiceImpl) FindAll(ctx context.Context, request webrequest.ListALlBookLoanRequest) []webresponse.ListBookLoanResponse {
+	limit := 10
+	offset := 0
+
+	if request.Limit > 0 {
+		limit = request.Limit
+	}
+	if request.Offset > 0 {
+		offset = request.Offset - 1
+	}
+
+	tx, err := s.DB.Begin()
+	helper.PanicIfError(err)
+	defer helper.CommitOrRollback(tx)
+
+	getList := s.BookLoanRepository.FindAll(ctx, tx, limit, offset)
+
+	return getList
+}

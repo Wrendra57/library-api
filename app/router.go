@@ -30,8 +30,9 @@ func NewRouter(userController controller.UserController, bookController controll
 	// router.GET("/api/users", middleware.AuthMiddleware(middleware.RoleMiddleware("member", userController.Authenticate)))
 
 	// Loan
-	router.POST("/api/book/loan", middleware.AuthMiddleware(middleware.RoleMiddleware("admin", bookLoanController.CreateBookLoan)))
-	router.POST("/api/book/loan/return", middleware.AuthMiddleware(middleware.RoleMiddleware("admin", bookLoanController.ReturnBookLoan)))
+	router.POST("/api/loan", middleware.AuthMiddleware(middleware.RoleMiddleware("admin", bookLoanController.CreateBookLoan)))
+	router.POST("/api/loan/return", middleware.AuthMiddleware(middleware.RoleMiddleware("admin", bookLoanController.ReturnBookLoan)))
+	router.GET("/api/loan", middleware.AuthMiddleware(middleware.RoleMiddleware("admin", bookLoanController.FindAll)))
 	router.PanicHandler = exception.ErrorHandler
 	return router
 }

@@ -2,6 +2,7 @@ package controller
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/be/perpustakaan/helper"
 	"github.com/be/perpustakaan/model/webrequest"
@@ -44,6 +45,27 @@ func (c *BookLoanControllerImpl) ReturnBookLoan(writer http.ResponseWriter, requ
 		Code:   200,
 		Status: "OK",
 		Data:   returnBook,
+	}
+	helper.WriteToResponseBody(writer, webResponse)
+}
+
+func (c *BookLoanControllerImpl) FindAll(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
+	listBookLoanRequest := webrequest.ListALlBookLoanRequest{}
+	if request.URL.Query().Get("limit") != "" {
+		l, err := strconv.Atoi(request.URL.Query().Get("limit"))
+		helper.PanicIfError(err)
+		listBookLoanRequest.Limit = l
+	}
+	if request.URL.Query().Get("limit") != "" {
+		o, err := strconv.Atoi(request.URL.Query().Get("offset"))
+		helper.PanicIfError(err)
+		listBookLoanRequest.Offset = o
+	}
+	getBookLoan := c.BookLoanService.FindAll(request.Context(), listBookLoanRequest)
+	webResponse := webresponse.ResponseApi{
+		Code:   200,
+		Status: "OK",
+		Data:   getBookLoan,
 	}
 	helper.WriteToResponseBody(writer, webResponse)
 }

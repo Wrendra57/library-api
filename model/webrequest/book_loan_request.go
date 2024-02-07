@@ -21,3 +21,8 @@ type BookLoanUpdateRequest struct {
 	User_id       int          `validate:"omitempty,required,number" json:"user_id"`
 	Admin_id      int          `validate:"omitempty,required,number" json:"admin_id"`
 }
+
+type ListALlBookLoanRequest struct {
+	Limit  int `validate:"omitempty,required,number" json:"limit"`
+	Offset int `validate:"omitempty,required,number" json:"offset"`
+}

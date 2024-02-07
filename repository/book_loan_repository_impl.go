@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"database/sql"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"time"
@@ -10,6 +11,7 @@ import (
 	"github.com/be/perpustakaan/helper"
 	"github.com/be/perpustakaan/model/domain"
 	"github.com/be/perpustakaan/model/webrequest"
+	"github.com/be/perpustakaan/model/webresponse"
 )
 
 type BookLoanRepositoryImpl struct {
@@ -102,4 +104,72 @@ func (r *BookLoanRepositoryImpl) Update(ctx context.Context, tx *sql.Tx, req web
 	helper.PanicIfError(err)
 
 	return req.Loan_id
+}
+
+func (r *BookLoanRepositoryImpl) FindAll(ctx context.Context, tx *sql.Tx, limit int, offset int) []webresponse.ListBookLoanResponse {
+	SQL := `select 
+				bl.loan_id, 
+				bl.checkout_date, 
+				bl.due_date, 
+				bl.return_date, 
+				bl.status, 
+				bl.admin_id,
+				JSON_OBJECT(
+					"book_id", b.book_id,
+					"book_title", b.title,
+					"foto", b.foto
+				) as book,
+				JSON_OBJECT(
+					"user_id", u.user_id,
+					"name", u.name,
+					"foto", u.foto
+				) as users,
+				bl.created_at,
+				JSON_OBJECT(
+					"penalty_id", p.penalty_id,
+					"penalty_amount", p.penalty_amount,
+					"payment_status", p.payment_status,
+					"reason", p.reason
+				) as penalty
+				FROM library.book_loan as bl
+			LEFT JOIN library.penalties as p on p.loan_id= bl.loan_id
+			LEFT JOIN library.book as b on b.book_id=bl.book_id
+			LEFT JOIN library.user as u on u.user_id=bl.user_id
+			ORDER BY bl.updated_at DESC
+			LIMIT ? 
+			OFFSET ?`
+
+	rows, err := tx.QueryContext(ctx, SQL, limit, offset)
+	helper.PanicIfError(err)
+	defer rows.Close()
+
+	var bookLoan []webresponse.ListBookLoanResponse
+	for rows.Next() {
+		b := webresponse.ListBookLoanResponse{}
+		var bookJSON, userJSON, penaltyJSON []byte
+
+		err := rows.Scan(&b.Loan_id, &b.Checkout_date, &b.Due_date, &b.Return_date, &b.Status, &b.Admin_id, &bookJSON, &userJSON, &b.Created_at, &penaltyJSON)
+		helper.PanicIfError(err)
+
+		var book webresponse.Book
+		err = json.Unmarshal(bookJSON, &book)
+		helper.PanicIfError(err)
+
+		var user webresponse.User
+		err = json.Unmarshal(userJSON, &user)
+		helper.PanicIfError(err)
+		fmt.Println("penaltyJSON")
+		fmt.Println(penaltyJSON)
+
+		var penalty webresponse.Penalty
+		err = json.Unmarshal(penaltyJSON, &penalty)
+		helper.PanicIfError(err)
+		fmt.Println(penalty)
+
+		b.Book = book
+		b.User = user
+		b.Penalties = penalty
+		bookLoan = append(bookLoan, b)
+	}
+	return bookLoan
 }
