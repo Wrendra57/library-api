@@ -247,11 +247,25 @@ func (s *BookLoanServiceImpl) FindById(ctx context.Context, id int) webresponse.
 	helper.PanicIfError(err)
 
 	penalty, err := s.Penalties.FindById(ctx, tx, bookLoan.Loan_id)
-	fmt.Println(bookLoan)
-	fmt.Println(book)
-	fmt.Println(user)
 
 	res := helper.ToDetailBookLoanResponseComplete(bookLoan, book, user, penalty)
 	return res
 	// panic("s")
+}
+
+func (s *BookLoanServiceImpl) ListByUserId(ctx context.Context) []webresponse.ListBookLoanResponse {
+	user_id, ok := ctx.Value("id").(int)
+	if !ok {
+		panic(exception.CustomEror{Code: 400, Error: "user not found "})
+	}
+
+	tx, err := s.DB.Begin()
+	helper.PanicIfError(err)
+	defer helper.CommitOrRollback(tx)
+
+	list, err := s.BookLoanRepository.ListByUserId(ctx, tx, user_id)
+	helper.PanicIfError(err)
+
+	return list
+
 }

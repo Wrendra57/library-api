@@ -12,4 +12,5 @@ type BookLoanService interface {
 	ReturnBookLoan(ctx context.Context, request webrequest.BookLoanCreateRequest) webresponse.BookLoanResponseComplete2
 	FindAll(ctx context.Context, request webrequest.ListALlBookLoanRequest) []webresponse.ListBookLoanResponse
 	FindById(ctx context.Context, id int) webresponse.ListBookLoanResponse
+	ListByUserId(ctx context.Context) []webresponse.ListBookLoanResponse
 }

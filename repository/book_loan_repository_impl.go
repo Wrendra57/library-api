@@ -136,7 +136,6 @@ func (r *BookLoanRepositoryImpl) FindAll(ctx context.Context, tx *sql.Tx, limit 
 			LEFT JOIN library.penalties as p on p.loan_id= bl.loan_id
 			LEFT JOIN library.book as b on b.book_id=bl.book_id
 			LEFT JOIN library.user as u on u.user_id=bl.user_id
-			WHERE bl.loan_id=5
 			ORDER BY bl.updated_at DESC
 			LIMIT ? 
 			OFFSET ?`
@@ -187,4 +186,85 @@ func (r *BookLoanRepositoryImpl) FindAll(ctx context.Context, tx *sql.Tx, limit 
 		bookLoan = append(bookLoan, b)
 	}
 	return bookLoan
+}
+
+func (r *BookLoanRepositoryImpl) ListByUserId(ctx context.Context, tx *sql.Tx, userId int) ([]webresponse.ListBookLoanResponse, error) {
+	SQL := `select 
+				bl.loan_id, 
+				bl.checkout_date, 
+				bl.due_date, 
+				bl.return_date, 
+				bl.status, 
+				bl.admin_id,
+				JSON_OBJECT(
+					"book_id", b.book_id,
+					"book_title", b.title,
+					"foto", b.foto
+				) as book,
+				JSON_OBJECT(
+					"user_id", u.user_id,
+					"name", u.name,
+					"foto", u.foto
+				) as users,
+				bl.created_at,
+				JSON_OBJECT(
+					"penalty_id", p.penalty_id,
+					"penalty_amount", p.penalty_amount,
+					"payment_status", p.payment_status,
+					"due_date", p.due_date,
+					"reason", p.reason
+				) as penalty
+				FROM library.book_loan as bl
+			LEFT JOIN library.penalties as p on p.loan_id= bl.loan_id
+			LEFT JOIN library.book as b on b.book_id=bl.book_id
+			LEFT JOIN library.user as u on u.user_id=bl.user_id
+			WHERE bl.user_id = ?
+			ORDER BY bl.updated_at DESC
+			`
+
+	rows, err := tx.QueryContext(ctx, SQL, userId)
+	helper.PanicIfError(err)
+	defer rows.Close()
+
+	var bookLoan []webresponse.ListBookLoanResponse
+	// Nilai waktu dalam string
+	timeString := "2024-02-10 08:50:30.000000"
+
+	// Layout yang diinginkan
+	layout := "2006-01-02 15:04:05.000000"
+	for rows.Next() {
+		b := webresponse.ListBookLoanResponse{}
+		var bookJSON, userJSON, penaltyJSON []byte
+
+		err := rows.Scan(&b.Loan_id, &b.Checkout_date, &b.Due_date, &b.Return_date, &b.Status, &b.Admin_id, &bookJSON, &userJSON, &b.Created_at, &penaltyJSON)
+		helper.PanicIfError(err)
+
+		var book webresponse.Book
+		err = json.Unmarshal(bookJSON, &book)
+		helper.PanicIfError(err)
+
+		var user webresponse.User
+		err = json.Unmarshal(userJSON, &user)
+		helper.PanicIfError(err)
+
+		var penalty webresponse.Penalty
+		err = json.Unmarshal(penaltyJSON, &penalty)
+		helper.PanicIfError(err)
+		fmt.Println(penalty.Due_date)
+		if penalty.Due_date != "" {
+			// Parse string ke dalam waktu
+			t, err := time.Parse(layout, timeString)
+			if err != nil {
+				fmt.Println("Error parsing time:", err)
+			}
+
+			// dateString := t.Format("2024-02-04T05:53:50Z")
+			penalty.Due_date = t.String()
+		}
+		b.Book = book
+		b.User = user
+		b.Penalties = penalty
+		bookLoan = append(bookLoan, b)
+	}
+	return bookLoan, nil
 }

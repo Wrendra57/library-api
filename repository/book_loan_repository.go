@@ -15,4 +15,5 @@ type BookLoanRepository interface {
 	FindById(ctx context.Context, tx *sql.Tx, id int) (domain.BookLoan, error)
 	Update(ctx context.Context, tx *sql.Tx, req webrequest.BookLoanUpdateRequest) int
 	FindAll(ctx context.Context, tx *sql.Tx, limit int, offset int) []webresponse.ListBookLoanResponse
+	ListByUserId(ctx context.Context, tx *sql.Tx, userId int) ([]webresponse.ListBookLoanResponse, error)
 }

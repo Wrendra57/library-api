@@ -103,3 +103,46 @@ CREATE TABLE penalties (
 
 ALTER Table book
 ADD COLUMN deleted_at TIMESTAMP DEFAULT NULL
+
+insert into user(name,
+            email,
+            password,
+            level,
+            is_enabled,
+            gender,
+            telp,
+            birthdate,
+            address,
+            foto,
+            batas) 
+values('superadmin','superadmin@gmail.com','$2a$10$efAjNoRgH8Xa7hBB5B5y5Oi8SgMw.osO1iJUK6dLPZoKHf2ep.9FW',
+        'superadmin',1,'male','08213254','2006-01-02','solo','https://res.cloudinary.com/dhtypvjsk/image/upload/v1703409186/uddbqkxn3xsytzrmo5ek.jpg',3)
+
+insert into user(name,
+            email,
+            password,
+            level,
+            is_enabled,
+            gender,
+            telp,
+            birthdate,
+            address,
+            foto,
+            batas) 
+values('admin','admin@gmail.com','$2a$10$efAjNoRgH8Xa7hBB5B5y5Oi8SgMw.osO1iJUK6dLPZoKHf2ep.9FW',
+        'superadmin',1,'male','08213254','2006-01-02','solo','https://res.cloudinary.com/dhtypvjsk/image/upload/v1703409186/uddbqkxn3xsytzrmo5ek.jpg',3)
+
+insert into user(name,
+            email,
+            password,
+            level,
+            is_enabled,
+            gender,
+            telp,
+            birthdate,
+            address,
+            foto,
+            batas) 
+values('member','member@gmail.com','$2a$10$efAjNoRgH8Xa7hBB5B5y5Oi8SgMw.osO1iJUK6dLPZoKHf2ep.9FW',
+        'superadmin',1,'male','08213254','2006-01-02','solo','https://res.cloudinary.com/dhtypvjsk/image/upload/v1703409186/uddbqkxn3xsytzrmo5ek.jpg',3)
+

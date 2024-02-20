@@ -85,3 +85,12 @@ func (c *BookLoanControllerImpl) FindById(writer http.ResponseWriter, request *h
 	}
 	helper.WriteToResponseBody(writer, webResponse)
 }
+func (c *BookLoanControllerImpl) ListByUserId(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
+	list := c.BookLoanService.ListByUserId(request.Context())
+	webResponse := webresponse.ResponseApi{
+		Code:   200,
+		Status: "OK",
+		Data:   list,
+	}
+	helper.WriteToResponseBody(writer, webResponse)
+}

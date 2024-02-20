@@ -2,14 +2,20 @@ package app
 
 import (
 	"database/sql"
+	"os"
 
 	"time"
 
 	"github.com/be/perpustakaan/helper"
+	"github.com/joho/godotenv"
 )
 
-func NewDB() *sql.DB{
-	db,err:=sql.Open("mysql","root:password@tcp(localhost:3306)/library?parseTime=true")
+func NewDB() *sql.DB {
+	errEnv := godotenv.Load()
+	helper.PanicIfError(errEnv)
+	db_url := os.Getenv("DATABASE_URL") + "?parseTime=true"
+
+	db, err := sql.Open("mysql", db_url)
 	helper.PanicIfError(err)
 
 	db.SetMaxIdleConns(5)
