@@ -99,7 +99,7 @@ func (r *BookLoanRepositoryImpl) Update(ctx context.Context, tx *sql.Tx, req web
 
 	SQL += " WHERE loan_id = ?"
 	args = append(args, req.Loan_id)
-	fmt.Println(SQL)
+
 	_, err := tx.Exec(SQL, args...)
 	helper.PanicIfError(err)
 
@@ -169,7 +169,7 @@ func (r *BookLoanRepositoryImpl) FindAll(ctx context.Context, tx *sql.Tx, limit 
 		var penalty webresponse.Penalty
 		err = json.Unmarshal(penaltyJSON, &penalty)
 		helper.PanicIfError(err)
-		fmt.Println(penalty.Due_date)
+
 		if penalty.Due_date != "" {
 			// Parse string ke dalam waktu
 			t, err := time.Parse(layout, timeString)
@@ -250,7 +250,7 @@ func (r *BookLoanRepositoryImpl) ListByUserId(ctx context.Context, tx *sql.Tx, u
 		var penalty webresponse.Penalty
 		err = json.Unmarshal(penaltyJSON, &penalty)
 		helper.PanicIfError(err)
-		fmt.Println(penalty.Due_date)
+
 		if penalty.Due_date != "" {
 			// Parse string ke dalam waktu
 			t, err := time.Parse(layout, timeString)

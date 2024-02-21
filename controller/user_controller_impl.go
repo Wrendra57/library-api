@@ -42,15 +42,13 @@ func (controller *UserControllerImpl) Register(writer http.ResponseWriter, reque
 	}
 	parsedTime, err := time.Parse(layout, request.FormValue("birthdate"))
 	if err != nil {
-		// fmt.Println("Error:", err)
-		// helper.PanicIfError(err)
+
 		panic(exception.CustomEror{Code: 400, Error: "Birthdate must be format YYYY-MM-DD"})
 	}
-	// fmt.Println(parsedTime)
+
 	registerRequest.Birthdate = parsedTime
 	registerRequest.Address = request.FormValue("address")
 
-	// fmt.Println(request.FormFile("foto")==nil)
 	file, _, err := request.FormFile("foto")
 	if err != nil {
 		if err.Error() == "http: no such file" {
@@ -80,7 +78,7 @@ func (controller *UserControllerImpl) Login(writer http.ResponseWriter, request 
 
 	loginRequest := webrequest.UserLoginRequest{}
 	helper.ReadFromRequestBody(request, &loginRequest)
-	// fmt.Println(loginRequest)
+
 	userLogin := controller.UserService.Login(request.Context(), loginRequest)
 
 	webResponse := webresponse.ResponseApi{
@@ -99,7 +97,6 @@ func (c *UserControllerImpl) Authenticate(writer http.ResponseWriter, request *h
 		http.Error(writer, "failed to get valueOne", http.StatusInternalServerError)
 		return
 	}
-	// fmt.Println("ff")
 
 	getUser := c.UserService.Authenticate(request.Context(), id)
 
@@ -128,15 +125,8 @@ func (c *UserControllerImpl) UpdateUser(writer http.ResponseWriter, request *htt
 
 	id, err := strconv.Atoi(params.ByName("id"))
 	helper.PanicIfError(err)
-	// fmt.Println("s")
-	// level, ok := request.Context().Value("level").(string)
 
-	// if !ok {
-	// 	http.Error(writer, "failed to get valueOne", http.StatusInternalServerError)
-	// 	return
-	// }
 	updateRequest := webrequest.UpdateUserRequest{}
-	// fmt.Println(updateRequest)
 
 	for key, values := range request.Form {
 		if len(values) > 0 {
@@ -154,14 +144,13 @@ func (c *UserControllerImpl) UpdateUser(writer http.ResponseWriter, request *htt
 			case "telp":
 				updateRequest.Telp = values[0]
 			case "birthdate":
-				// fmt.Println("qq")
-				// fmt.Println(values[0])
+
 				if values[0] != "" {
 
 					layout := "2006-01-02"
 					parsedTime, err := time.Parse(layout, request.FormValue("birthdate"))
 					if err != nil {
-						fmt.Println("Error:", err)
+
 						helper.PanicIfError(err)
 					}
 					updateRequest.Birthdate.Time = parsedTime
@@ -180,22 +169,15 @@ func (c *UserControllerImpl) UpdateUser(writer http.ResponseWriter, request *htt
 			case "batas":
 				updateRequest.Batas = values[0]
 
-				// case "batas":
-
-				// case "foto":
-				// 	updateRequest.Foto = values
-				// Tambahkan case untuk field lain sesuai kebutuhan
 			}
 		}
 	}
 
-	// if request.FormFile("")
 	file, _, err := request.FormFile("foto")
-	// fmt.Println(file)
+
 	if err != nil {
-		fmt.Println("gada file")
+		fmt.Println("no file")
 	}
-	// defer file.Close()
 
 	var foto []byte
 

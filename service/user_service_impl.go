@@ -35,7 +35,7 @@ func NewUserService(userRepository repository.UserRepository, DB *sql.DB, valida
 }
 
 func (s *UserServiceImpl) CreateUser(ctx context.Context, request webrequest.UserCreateRequest) webresponse.UserResponse {
-	// fmt.Println("service jalan")
+
 	// service
 	err := s.Validate.Struct(request)
 	helper.PanicIfError(err)
@@ -49,21 +49,19 @@ func (s *UserServiceImpl) CreateUser(ctx context.Context, request webrequest.Use
 		panic(exception.DuplicateEmailError{Error: "Email already exists"})
 	}
 
-	// reader := bytes.NewReader(request.Foto)
+	reader := bytes.NewReader(request.Foto)
 
-	// result, err := s.Cld.Upload.Upload(ctx, reader, uploader.UploadParams{})
-	// if err != nil {
-	// 	// fmt.Println(err)
-	// 	panic("upload fatal")
-	// }
-	// fmt.Println(result.SecureURL)
+	result, err := s.Cld.Upload.Upload(ctx, reader, uploader.UploadParams{})
+	if err != nil {
+
+		panic(exception.DuplicateEmailError{Error: "upload fatal"})
+	}
 
 	hashedPassword, err := helper.HashPassword(request.Password)
 	if err != nil {
-		// fmt.Println(err)
-		panic("failed hashing password")
+		panic(exception.DuplicateEmailError{Error: "failed hashing password"})
+
 	}
-	// fmt.Println(hashedPassword)
 
 	user := domain.User{
 		Name:       request.Name,
@@ -75,7 +73,7 @@ func (s *UserServiceImpl) CreateUser(ctx context.Context, request webrequest.Use
 		Telp:       request.Telp,
 		Birthdate:  request.Birthdate,
 		Address:    request.Address,
-		Foto:       "https://res.cloudinary.com/dhtypvjsk/image/upload/v1704770264/uffz5gbfewkn7gnbxeu4.jpg",
+		Foto:       result.SecureURL,
 		Batas:      3,
 	}
 
@@ -85,7 +83,7 @@ func (s *UserServiceImpl) CreateUser(ctx context.Context, request webrequest.Use
 }
 
 func (s *UserServiceImpl) Login(ctx context.Context, request webrequest.UserLoginRequest) webresponse.LoginResponse {
-	// fmt.Println("service jalan")
+
 	err := s.Validate.Struct(request)
 	helper.PanicIfError(err)
 
@@ -98,7 +96,6 @@ func (s *UserServiceImpl) Login(ctx context.Context, request webrequest.UserLogi
 	if err != nil {
 		panic(exception.CustomEror{Code: 400, Error: "Email " + request.Email + " not found"})
 	}
-	// fmt.Println(getUser)
 
 	// compare password
 	comparePassword := helper.ComparePassword(request.Password, getUser.Password)
@@ -106,7 +103,6 @@ func (s *UserServiceImpl) Login(ctx context.Context, request webrequest.UserLogi
 	if !comparePassword {
 		panic(exception.CustomEror{Code: 400, Error: "Password not match"})
 	}
-	// fmt.Println(comparePassword)
 
 	toString := webrequest.UserGenereteToken{
 		Id:    getUser.User_id,
@@ -115,7 +111,6 @@ func (s *UserServiceImpl) Login(ctx context.Context, request webrequest.UserLogi
 	}
 	generateToken, err := helper.GenerateJWT(toString)
 	helper.PanicIfError(err)
-	// fmt.Println(generateToken)
 
 	token := webresponse.LoginResponse{
 		Token: generateToken,
@@ -124,7 +119,6 @@ func (s *UserServiceImpl) Login(ctx context.Context, request webrequest.UserLogi
 }
 
 func (s *UserServiceImpl) Authenticate(ctx context.Context, id int) webresponse.UserResponse {
-	// fmt.Println("service jalan")
 
 	tx, err := s.DB.Begin()
 	helper.PanicIfError(err)
@@ -134,13 +128,11 @@ func (s *UserServiceImpl) Authenticate(ctx context.Context, id int) webresponse.
 	if err != nil {
 		panic(exception.CustomEror{Code: 400, Error: "user not found"})
 	}
-	// fmt.Println(getUser)
 
 	return helper.ToUserResponse(getUser)
 }
 
 func (s *UserServiceImpl) ListAllUsers(ctx context.Context) []webresponse.UserResponse {
-	// fmt.Println("Listing all users")
 
 	tx, err := s.DB.Begin()
 	helper.PanicIfError(err)
@@ -153,6 +145,12 @@ func (s *UserServiceImpl) ListAllUsers(ctx context.Context) []webresponse.UserRe
 }
 
 func (s *UserServiceImpl) UpdateUser(ctx context.Context, request webrequest.UpdateUserRequest, id int) bool {
+	level, ok := ctx.Value("level").(string)
+	idToken, _ := ctx.Value("id").(int)
+	if !ok {
+		panic(exception.CustomEror{Code: 400, Error: "token not found "})
+	}
+
 	err := s.Validate.Struct(request)
 	helper.PanicIfError(err)
 
@@ -160,33 +158,37 @@ func (s *UserServiceImpl) UpdateUser(ctx context.Context, request webrequest.Upd
 	helper.PanicIfError(err)
 	defer helper.CommitOrRollback(tx)
 
-	_, err = s.UserRepository.FindById(ctx, tx, id)
-	// helper.PanicIfError(err)
+	user, err := s.UserRepository.FindById(ctx, tx, id)
+
 	if err != nil {
 		panic(exception.NewNotFoundError(err.Error()))
 	}
 
+	if level != "superadmin" && user.User_id != idToken {
+		panic(exception.CustomEror{Code: 400, Error: "unautorized access"})
+	}
+	if level != "superadmin" {
+		request.Level = ""
+	}
 	if request.Foto != nil {
 		reader := bytes.NewReader(request.Foto)
 
 		result, err := s.Cld.Upload.Upload(ctx, reader, uploader.UploadParams{})
 		if err != nil {
-			// fmt.Println(err)
+
 			panic("upload fatal")
 		}
-		// fmt.Println(result.SecureURL)
+
 		request.UrlFoto = result.SecureURL
 	}
 
 	_ = s.UserRepository.Update(ctx, tx, id, request)
-	// fmt.Println(update)
-	// user := domain.User{}
-	// panic("sda")
+
 	return true
 }
 
 func (s *UserServiceImpl) FindByid(ctx context.Context, id string) webresponse.UserResponse {
-	// fmt.Println("find by id userservice ")
+
 	idInt := konversi.StrToInt(id, "user id")
 
 	tx, err := s.DB.Begin()
@@ -197,7 +199,6 @@ func (s *UserServiceImpl) FindByid(ctx context.Context, id string) webresponse.U
 	if err != nil {
 		panic(exception.CustomEror{Code: 400, Error: "user not found"})
 	}
-	// fmt.Println(getUser)
 
 	return helper.ToUserResponse(getUser)
 

@@ -71,7 +71,6 @@ func TestAuthenticateSucces(t *testing.T) {
 	var responseBody map[string]interface{}
 	json.Unmarshal(bodyResp, &responseBody)
 
-	// fmt.Println("login", responseBody)
 	token, ok := responseBody["data"].(map[string]interface{})["token"].(string)
 	if !ok {
 		fmt.Println("Token not found in the response.")
@@ -131,20 +130,14 @@ func TestAuthenticateSucces(t *testing.T) {
 			router.ServeHTTP(recorderLogin, requestLogin)
 
 			response := recorderLogin.Result()
-			// assert.Equal(t, test.expected_code, response.StatusCode)
 
 			bodyResp, _ := io.ReadAll(response.Body)
 			var responseBody map[string]interface{}
 			json.Unmarshal(bodyResp, &responseBody)
 
-			// fmt.Println(responseBody)
 			assert.Equal(t, test.expected_code, int(responseBody["code"].(float64)))
 			assert.Equal(t, test.expected_status, responseBody["status"])
-			// if test.expected_data == "success" {
-			// 	assert.NotNil(t, responseBody["data"])
-			// } else {
-			// 	assert.Nil(t, responseBody["data"])
-			// }
+
 		})
 	}
 

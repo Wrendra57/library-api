@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"fmt"
 	"time"
 
 	"github.com/be/perpustakaan/helper"
@@ -257,12 +256,10 @@ func (r *BookRepositoryImpl) Update(ctx context.Context, tx *sql.Tx, id int, boo
 		args = append(args, book.Admin_id)
 	}
 	SQL = SQL[:len(SQL)-2]
-	fmt.Println("1223")
 
 	SQL += " WHERE book_id = ?"
 	args = append(args, id)
-	fmt.Println("122")
-	fmt.Println(SQL)
+
 	_, err := tx.Exec(SQL, args...)
 	helper.PanicIfError(err)
 

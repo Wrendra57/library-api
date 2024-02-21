@@ -38,7 +38,9 @@ func InitializedServer() *http.Server {
 	penaltiesRepository := repository.NewPenaltiesRepository()
 	bookLoanService := service.NewBookLoanService(bookLoanRepository, userRepository, bookRepository, penaltiesRepository, db, validate, cloudinary)
 	bookLoanController := controller.NewBookLoanController(bookLoanService)
-	router := app.NewRouter(userController, bookController, bookLoanController)
+	penaltiesService := service.NewPenaltiesService(userRepository, penaltiesRepository, db, validate)
+	penaltiesController := controller.NewPenaltiesController(penaltiesService)
+	router := app.NewRouter(userController, bookController, bookLoanController, penaltiesController)
 	server := NewServer(router)
 	return server
 }

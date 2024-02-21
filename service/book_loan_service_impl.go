@@ -3,7 +3,6 @@ package service
 import (
 	"context"
 	"database/sql"
-	"fmt"
 	"math"
 	"strconv"
 	"time"
@@ -112,7 +111,6 @@ func (s *BookLoanServiceImpl) ReturnBookLoan(ctx context.Context, request webreq
 	if !ok {
 		panic(exception.CustomEror{Code: 400, Error: "user not found "})
 	}
-	fmt.Println(request.Id)
 
 	err := s.Validate.Struct(request)
 	helper.PanicIfError(err)
@@ -162,10 +160,10 @@ func (s *BookLoanServiceImpl) ReturnBookLoan(ctx context.Context, request webreq
 	updateBookLoan.Return_date.Valid = true
 
 	penalty := domain.Penalties{}
-	if compare.CompareTime(timeNow.Format(time.RFC3339), bookLoan.Due_date.Format(time.RFC3339)) {
+	if compare.CompareTime(timeNow.Format(time.RFC3339), bookLoan.Due_date.Format(time.RFC3339)) == false {
 		updateBookLoan.Status = "returned"
 		bookLoan.Status = "returned"
-		fmt.Println("not late")
+
 	} else {
 		updateBookLoan.Status = "overdue"
 		bookLoan.Status = "overdue"

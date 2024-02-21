@@ -16,7 +16,7 @@ func GenerateJWT(user webrequest.UserGenereteToken) (string, error) {
 		"level": user.Level,
 		"exp":   time.Now().Add(time.Hour * 24).Unix(),
 	}
-	// fmt.Println("expired ==>", time.Now().Add(time.Hour*24).Unix())
+
 	secret := []byte(os.Getenv("SECRET_KEY"))
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
@@ -26,7 +26,7 @@ func GenerateJWT(user webrequest.UserGenereteToken) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	fmt.Println(tokenString)
+
 	return tokenString, nil
 }
 
@@ -37,24 +37,24 @@ func ParseJWT(tokenString string) (*webrequest.UserGenereteToken, error) {
 	token, err := jwt.ParseWithClaims(tokenString, &webrequest.UserGenereteToken{}, func(token *jwt.Token) (interface{}, error) {
 		return []byte(secret), nil
 	})
-	fmt.Println("parse    ", token)
+
 	if err != nil {
-		// fmt.Println("Error parsing with claims:")
+
 		return &webrequest.UserGenereteToken{}, err
 	}
 
 	// Verify the token
 	if !token.Valid {
-		// fmt.Println("token is not valid")
+
 		return &webrequest.UserGenereteToken{}, fmt.Errorf("invalid token")
 	}
 
 	// Extract custom claims
 	claims, ok := token.Claims.(*webrequest.UserGenereteToken)
 	if !ok {
-		// fmt.Println("err claims")
+
 		return &webrequest.UserGenereteToken{}, fmt.Errorf("failed to parse custom claims")
 	}
-	// fmt.Println(claims)
+
 	return claims, nil
 }

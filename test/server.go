@@ -16,7 +16,7 @@ import (
 )
 
 func SetupTestDB() *sql.DB {
-	
+
 	db, err := sql.Open("mysql", "root:password@tcp(localhost:3306)/library?parseTime=true")
 	helper.PanicIfError(err)
 	db.SetMaxIdleConns(5)
@@ -49,7 +49,9 @@ func SetupRouter(db *sql.DB) http.Handler {
 	bookLoanRepository := repository.NewBookLoanRepository()
 	bookLoanService := service.NewBookLoanService(bookLoanRepository, userRepository, bookRepository, penaltiesRepository, db, validate, cld)
 	bookLoanController := controller.NewBookLoanController(bookLoanService)
-	router := app.NewRouter(userController, bookController, bookLoanController)
+	penaltiesService := service.NewPenaltiesService(userRepository, penaltiesRepository, db, validate)
+	penaltisContoller := controller.NewPenaltiesController(penaltiesService)
+	router := app.NewRouter(userController, bookController, bookLoanController, penaltisContoller)
 	return router
 }
 

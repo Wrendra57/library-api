@@ -46,7 +46,6 @@ func TestListUserSucces(t *testing.T) {
 	var responseBody map[string]interface{}
 	json.Unmarshal(bodyResp, &responseBody)
 
-	// fmt.Println("login", responseBody)
 	token, ok := responseBody["data"].(map[string]interface{})["token"].(string)
 	if !ok {
 		fmt.Println("Token not found in the response.")
@@ -146,7 +145,6 @@ func TestListUserAnotherAdminrole(t *testing.T) {
 	var respLogin map[string]interface{}
 	json.Unmarshal(bodyRespLogin, &respLogin)
 
-	// fmt.Println("login", respLogin)
 	token, ok := respLogin["data"].(map[string]interface{})["token"].(string)
 	if !ok {
 		fmt.Println("Token not found in the response.")
@@ -200,7 +198,6 @@ func TestListUserInvalidToken(t *testing.T) {
 	var responseBody map[string]interface{}
 	json.Unmarshal(bodyResp, &responseBody)
 
-	// fmt.Println("login", responseBody)
 	token, ok := responseBody["data"].(map[string]interface{})["token"].(string)
 	if !ok {
 		fmt.Println("Token not found in the response.")

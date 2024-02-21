@@ -57,8 +57,6 @@ func TestRegiterUserSuccess(t *testing.T) {
 	var responseBody map[string]interface{}
 	json.Unmarshal(bodyResp, &responseBody)
 
-	// fmt.Println(responseBody)
-
 	assert.Equal(t, 200, int(responseBody["code"].(float64)))
 	assert.Equal(t, "OK", responseBody["status"])
 	assert.NotNil(t, responseBody["data"], err)
@@ -106,8 +104,6 @@ func TestRegisterNotValidEmail(t *testing.T) {
 	var responseBody map[string]interface{}
 	json.Unmarshal(bodyResp, &responseBody)
 
-	// fmt.Println(responseBody)
-
 	assert.Equal(t, 400, int(responseBody["code"].(float64)))
 	assert.Equal(t, "Email must be a valid email address", responseBody["status"])
 	assert.Nil(t, responseBody["data"])
@@ -154,8 +150,6 @@ func TestRegisterEmptyEmail(t *testing.T) {
 	bodyResp, _ := io.ReadAll(response.Body)
 	var responseBody map[string]interface{}
 	json.Unmarshal(bodyResp, &responseBody)
-
-	// fmt.Println(responseBody)
 
 	assert.Equal(t, 400, int(responseBody["code"].(float64)))
 	assert.Equal(t, "Email is required", responseBody["status"])
@@ -227,8 +221,6 @@ func TestRegisterDuplicateEmail(t *testing.T) {
 	var responseBody map[string]interface{}
 	json.Unmarshal(bodyResp, &responseBody)
 
-	// fmt.Println(responseBody)
-
 	assert.Equal(t, 400, int(responseBody["code"].(float64)))
 	assert.Equal(t, "Email already exists", responseBody["status"])
 	assert.Nil(t, responseBody["data"])
@@ -299,8 +291,6 @@ func TestRegisterMaxCharEmail(t *testing.T) {
 	var responseBody map[string]interface{}
 	json.Unmarshal(bodyResp, &responseBody)
 
-	// fmt.Println(responseBody)
-
 	assert.Equal(t, 400, int(responseBody["code"].(float64)))
 	assert.Equal(t, "Email must be maximum 100 characters long", responseBody["status"])
 	assert.Nil(t, responseBody["data"])
@@ -347,8 +337,6 @@ func TestRegisterEmptyName(t *testing.T) {
 	bodyResp, _ := io.ReadAll(response.Body)
 	var responseBody map[string]interface{}
 	json.Unmarshal(bodyResp, &responseBody)
-
-	// fmt.Println(responseBody)
 
 	assert.Equal(t, 400, int(responseBody["code"].(float64)))
 	assert.Equal(t, "Name is required", responseBody["status"])
@@ -397,8 +385,6 @@ func TestRegisterMaxCharName(t *testing.T) {
 	var responseBody map[string]interface{}
 	json.Unmarshal(bodyResp, &responseBody)
 
-	// fmt.Println(responseBody)
-
 	assert.Equal(t, 400, int(responseBody["code"].(float64)))
 	assert.Equal(t, "Name must be maximum 100 characters long", responseBody["status"])
 	assert.Nil(t, responseBody["data"])
@@ -446,8 +432,6 @@ func TestRegisterMinCharName(t *testing.T) {
 	var responseBody map[string]interface{}
 	json.Unmarshal(bodyResp, &responseBody)
 
-	// fmt.Println(responseBody)
-
 	assert.Equal(t, 400, int(responseBody["code"].(float64)))
 	assert.Equal(t, "Name must be at least 3 characters long", responseBody["status"])
 	assert.Nil(t, responseBody["data"])
@@ -493,8 +477,6 @@ func TestRegisterEmptyPassword(t *testing.T) {
 	bodyResp, _ := io.ReadAll(response.Body)
 	var responseBody map[string]interface{}
 	json.Unmarshal(bodyResp, &responseBody)
-
-	// fmt.Println(responseBody)
 
 	assert.Equal(t, 400, int(responseBody["code"].(float64)))
 	assert.Equal(t, "Password is required", responseBody["status"])
@@ -543,8 +525,6 @@ func TestRegisterMaxCharPassword(t *testing.T) {
 	var responseBody map[string]interface{}
 	json.Unmarshal(bodyResp, &responseBody)
 
-	// fmt.Println(responseBody)
-
 	assert.Equal(t, 400, int(responseBody["code"].(float64)))
 	assert.Equal(t, "Password must be maximum 100 characters long", responseBody["status"])
 	assert.Nil(t, responseBody["data"])
@@ -591,8 +571,6 @@ func TestRegisterEmptyGender(t *testing.T) {
 	bodyResp, _ := io.ReadAll(response.Body)
 	var responseBody map[string]interface{}
 	json.Unmarshal(bodyResp, &responseBody)
-
-	// fmt.Println(responseBody)
 
 	assert.Equal(t, 400, int(responseBody["code"].(float64)))
 	assert.Equal(t, "Gender is required", responseBody["status"])
@@ -641,8 +619,6 @@ func TestRegisterNotValidGender(t *testing.T) {
 	var responseBody map[string]interface{}
 	json.Unmarshal(bodyResp, &responseBody)
 
-	// fmt.Println(responseBody)
-
 	assert.Equal(t, 400, int(responseBody["code"].(float64)))
 	assert.Equal(t, "Gender must be a male female", responseBody["status"])
 	assert.Nil(t, responseBody["data"])
@@ -689,8 +665,6 @@ func TestRegisterEmptyTelp(t *testing.T) {
 	bodyResp, _ := io.ReadAll(response.Body)
 	var responseBody map[string]interface{}
 	json.Unmarshal(bodyResp, &responseBody)
-
-	// fmt.Println(responseBody)
 
 	assert.Equal(t, 400, int(responseBody["code"].(float64)))
 	assert.Equal(t, "Telp is required", responseBody["status"])
@@ -739,8 +713,6 @@ func TestRegisterEmptyBirthdate(t *testing.T) {
 	var responseBody map[string]interface{}
 	json.Unmarshal(bodyResp, &responseBody)
 
-	// fmt.Println(responseBody)
-
 	assert.Equal(t, 400, int(responseBody["code"].(float64)))
 	assert.Equal(t, "Birthdate is required", responseBody["status"])
 	assert.Nil(t, responseBody["data"])
@@ -787,8 +759,6 @@ func TestRegisterNotValidBirthdate(t *testing.T) {
 	bodyResp, _ := io.ReadAll(response.Body)
 	var responseBody map[string]interface{}
 	json.Unmarshal(bodyResp, &responseBody)
-
-	// fmt.Println(responseBody)
 
 	assert.Equal(t, 400, int(responseBody["code"].(float64)))
 	assert.Equal(t, "Birthdate must be format YYYY-MM-DD", responseBody["status"])
@@ -837,8 +807,6 @@ func TestRegisterEmptyAddress(t *testing.T) {
 	var responseBody map[string]interface{}
 	json.Unmarshal(bodyResp, &responseBody)
 
-	// fmt.Println(responseBody)
-
 	assert.Equal(t, 400, int(responseBody["code"].(float64)))
 	assert.Equal(t, "Address is required", responseBody["status"])
 	assert.Nil(t, responseBody["data"])
@@ -860,16 +828,6 @@ func TestRegisterEmptyFoto(t *testing.T) {
 	writer.WriteField("birthdate", "2006-09-11")
 	writer.WriteField("address", "")
 
-	// file, err := os.Open("../../asset/testimage.png")
-	// helper.PanicIfError(err)
-	// defer file.Close()
-
-	// part, err := writer.CreateFormFile("foto", "testimage.png")
-	// helper.PanicIfError(err)
-
-	// _, err = io.Copy(part, file)
-	// helper.PanicIfError(err)
-
 	writer.Close()
 
 	request := httptest.NewRequest(http.MethodPost, "http://localhost:8001/api/users/register", body)
@@ -885,8 +843,6 @@ func TestRegisterEmptyFoto(t *testing.T) {
 	bodyResp, _ := io.ReadAll(response.Body)
 	var responseBody map[string]interface{}
 	json.Unmarshal(bodyResp, &responseBody)
-
-	// fmt.Println(responseBody)
 
 	assert.Equal(t, 400, int(responseBody["code"].(float64)))
 	assert.Equal(t, "Foto is required", responseBody["status"])

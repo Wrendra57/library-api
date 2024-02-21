@@ -8,6 +8,7 @@ import (
 
 	"github.com/be/perpustakaan/helper"
 	"github.com/be/perpustakaan/model/domain"
+	"github.com/be/perpustakaan/model/webrequest"
 )
 
 type PenaltiesRepositoryImpl struct {
@@ -32,7 +33,7 @@ func (r *PenaltiesRepositoryImpl) Create(ctx context.Context, tx *sql.Tx, p doma
 }
 
 func (r *PenaltiesRepositoryImpl) FindById(ctx context.Context, tx *sql.Tx, id int) (domain.Penalties, error) {
-	SQL := `SELECT penalty_id,loan_id,penalty_amount,reason,payment_status,payment_status,due_date,admin_id,created_at,updated_at from penalties where loan_id = ?`
+	SQL := `SELECT penalty_id,loan_id,penalty_amount,reason,payment_status,due_date,admin_id,created_at,updated_at from penalties where penalty_id = ?`
 	rows, err := tx.QueryContext(ctx, SQL, id)
 	helper.PanicIfError(err)
 
@@ -45,4 +46,39 @@ func (r *PenaltiesRepositoryImpl) FindById(ctx context.Context, tx *sql.Tx, id i
 	} else {
 		return p, errors.New("book loan not found")
 	}
+}
+func (r *PenaltiesRepositoryImpl) Update(ctx context.Context, tx *sql.Tx, id int, p webrequest.UpdatePenaltiesRequest) webrequest.UpdatePenaltiesRequest {
+	SQL := "update penalties set "
+	var args []interface{}
+
+	if p.Due_date.Valid {
+		SQL += "due_date = ?, "
+		args = append(args, p.Due_date.Value)
+	}
+	if p.Penalty_amount != 0 {
+		SQL += "penalty_amount = ?, "
+		args = append(args, p.Penalty_amount)
+	}
+	if p.Payment_status != "" {
+		SQL += "payment_status = ?, "
+		args = append(args, p.Payment_status)
+	}
+	if p.Reason != "" {
+		SQL += "reason = ?, "
+		args = append(args, p.Reason)
+	}
+	if p.Admin_id != 0 {
+		SQL += "admin_id = ?, "
+		args = append(args, p.Admin_id)
+	}
+	SQL = SQL[:len(SQL)-2]
+	SQL += " WHERE penalty_id = ?"
+	args = append(args, id)
+
+	_, err := tx.Exec(SQL, args...)
+	if err != nil {
+		helper.PanicIfError(err)
+	}
+
+	return p
 }
