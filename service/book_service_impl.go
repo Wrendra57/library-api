@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"database/sql"
-	"fmt"
 	"strconv"
 
 	"github.com/be/perpustakaan/exception"
@@ -46,7 +45,7 @@ func NewBookService(bookRepository repository.BookRepository, DB *sql.DB, valida
 }
 
 func (s *BookServiceImpl) CreateBook(ctx context.Context, request webrequest.BookCreateRequest) webresponse.BookResponseComplete {
-	fmt.Println("serviceCreate")
+
 	admin_id, ok := ctx.Value("id").(int)
 
 	if !ok {
@@ -76,7 +75,7 @@ func (s *BookServiceImpl) CreateBook(ctx context.Context, request webrequest.Boo
 		c.Category = request.Category
 		category = s.CategoryRepository.Create(ctx, tx, c)
 	}
-	fmt.Println("Category ==>", category)
+
 	book.Category_id = category.Category_id
 
 	// handle author_id
@@ -87,7 +86,7 @@ func (s *BookServiceImpl) CreateBook(ctx context.Context, request webrequest.Boo
 		}
 		author = s.AuthorRepository.Create(ctx, tx, a)
 	}
-	fmt.Println("author =>>>", author)
+
 	book.Author_id = author.Author_id
 
 	// handle publisher_id
@@ -98,7 +97,7 @@ func (s *BookServiceImpl) CreateBook(ctx context.Context, request webrequest.Boo
 		}
 		publisher = s.PublisherRepository.Create(ctx, tx, p)
 	}
-	fmt.Println("publisher =>>>", publisher)
+
 	book.Publisher_id = publisher.Publisher_id
 
 	book.Isbn = request.Isbn
@@ -131,7 +130,7 @@ func (s *BookServiceImpl) CreateBook(ctx context.Context, request webrequest.Boo
 		}
 		rak = s.RakRepository.Create(ctx, tx, a)
 	}
-	fmt.Println("rakk==>", rak)
+
 	book.Rak_id = rak.Rak_id
 
 	price := konversi.StrToInt(request.Price, "price")
@@ -142,14 +141,11 @@ func (s *BookServiceImpl) CreateBook(ctx context.Context, request webrequest.Boo
 
 	result, err := s.Cld.Upload.Upload(ctx, reader, uploader.UploadParams{})
 	if err != nil {
-		fmt.Println(err)
+
 		panic("upload fatal")
 	}
-	fmt.Println(result.SecureURL)
-	book.Foto = result.SecureURL
 
-	fmt.Print("book")
-	fmt.Print(book)
+	book.Foto = result.SecureURL
 
 	boks := s.BookRepository.Create(ctx, tx, book)
 
@@ -176,7 +172,6 @@ func (s *BookServiceImpl) CreateBook(ctx context.Context, request webrequest.Boo
 }
 
 func (s *BookServiceImpl) FindBookById(ctx context.Context, id int) webresponse.BookResponseComplete {
-	fmt.Println("service find book")
 
 	tx, err := s.DB.Begin()
 	helper.PanicIfError(err)
@@ -186,14 +181,13 @@ func (s *BookServiceImpl) FindBookById(ctx context.Context, id int) webresponse.
 	if err != nil {
 		panic(exception.CustomEror{Code: 400, Error: "book not found"})
 	}
-	fmt.Println(getBook)
 
 	return getBook
 
 }
 
 func (s *BookServiceImpl) ListBook(ctx context.Context, request webrequest.FindAllRequest) []webresponse.BookResponseComplete {
-	fmt.Println("service list book")
+
 	// deffault limit
 	limit := 30
 	offset := 0
@@ -224,13 +218,11 @@ func (s *BookServiceImpl) ListBook(ctx context.Context, request webrequest.FindA
 
 	getBooks := s.BookRepository.ListBook(ctx, tx, limit, offset)
 
-	fmt.Println(getBooks)
-
 	return getBooks
 }
 
 func (s *BookServiceImpl) SearchBook(ctx context.Context, search string, l webrequest.FindAllRequest) []webresponse.BookResponseComplete {
-	fmt.Println("service list book")
+
 	// deffault limit
 	limit := 30
 	offset := 0
@@ -270,13 +262,11 @@ func (s *BookServiceImpl) SearchBook(ctx context.Context, search string, l webre
 
 	getBooks := s.BookRepository.FindBook(ctx, tx, req)
 
-	fmt.Println(getBooks)
-
 	return getBooks
 }
 
 func (s *BookServiceImpl) UpdateBook(ctx context.Context, request webrequest.UpdateBookRequest, id int) int {
-	fmt.Println("service update")
+
 	admin_id, ok := ctx.Value("id").(int)
 
 	if !ok {
@@ -313,7 +303,7 @@ func (s *BookServiceImpl) UpdateBook(ctx context.Context, request webrequest.Upd
 			c.Category = request.Category
 			category = s.CategoryRepository.Create(ctx, tx, c)
 		}
-		fmt.Println("Category ==>", category)
+
 		book.Category_id = category.Category_id
 	}
 
@@ -325,7 +315,7 @@ func (s *BookServiceImpl) UpdateBook(ctx context.Context, request webrequest.Upd
 			}
 			author = s.AuthorRepository.Create(ctx, tx, a)
 		}
-		fmt.Println("author =>>>", author)
+
 		book.Author_id = author.Author_id
 	}
 
@@ -337,7 +327,7 @@ func (s *BookServiceImpl) UpdateBook(ctx context.Context, request webrequest.Upd
 			}
 			publisher = s.PublisherRepository.Create(ctx, tx, p)
 		}
-		fmt.Println("publisher =>>>", publisher)
+
 		book.Publisher_id = publisher.Publisher_id
 	}
 
@@ -371,7 +361,7 @@ func (s *BookServiceImpl) UpdateBook(ctx context.Context, request webrequest.Upd
 			}
 			rak = s.RakRepository.Create(ctx, tx, a)
 		}
-		fmt.Println("rakk==>", rak)
+
 		book.Rak_id = rak.Rak_id
 	}
 
@@ -384,39 +374,29 @@ func (s *BookServiceImpl) UpdateBook(ctx context.Context, request webrequest.Upd
 
 		result, err := s.Cld.Upload.Upload(ctx, reader, uploader.UploadParams{})
 		if err != nil {
-			fmt.Println(err)
+
 			panic(exception.CustomEror{Code: 400, Error: "gagal upload foto"})
 		}
-		fmt.Println(result.SecureURL)
+
 		book.Foto = result.SecureURL
 	}
 
 	update := s.BookRepository.Update(ctx, tx, id, book)
-
-	fmt.Print("book")
-	fmt.Print(book)
 
 	// panic("sda")
 	return update
 }
 
 func (s *BookServiceImpl) DeleteBook(ctx context.Context, id int) int {
-	fmt.Println("delete book")
-	// admin_id, ok := ctx.Value("id").(int)
-
-	// if !ok {
-	// 	panic(exception.CustomEror{Code: 400, Error: "user not found "})
-	// }
 
 	tx, err := s.DB.Begin()
 	helper.PanicIfError(err)
 	defer helper.CommitOrRollback(tx)
 
-	getBook, err := s.BookRepository.FindById(ctx, tx, id)
+	_, err = s.BookRepository.FindById(ctx, tx, id)
 	if err != nil {
 		panic(exception.CustomEror{Code: 400, Error: "book not found"})
 	}
-	fmt.Println(getBook)
 
 	err = s.BookRepository.DeleteBook(ctx, tx, id)
 	if err != nil {

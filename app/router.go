@@ -1,12 +1,6 @@
 package app
 
-// @title Category RESTful API
-// @description API Spec for Category RESTful API
-// @version 1.0
-// @host localhost:8001
-// @BasePath /api
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/be/perpustakaan/controller"
@@ -15,11 +9,10 @@ import (
 	"github.com/be/perpustakaan/middleware"
 	"github.com/be/perpustakaan/model/webresponse"
 
-	// _ "github.com/be/perpustakaan/middleware"
 	"github.com/julienschmidt/httprouter"
 )
 
-func NewRouter(userController controller.UserController, bookController controller.BookController, bookLoanController controller.BookLoanController) *httprouter.Router {
+func NewRouter(userController controller.UserController, bookController controller.BookController, bookLoanController controller.BookLoanController, penaltiesController controller.PenaltiesController) *httprouter.Router {
 	router := httprouter.New()
 	router.GET("/", func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		w.Header().Set("Content-Type", "application/json")
@@ -49,19 +42,9 @@ func NewRouter(userController controller.UserController, bookController controll
 	router.GET("/api/loan/:id", middleware.AuthMiddleware(bookLoanController.FindById))
 	router.GET("/api/loans/mylist", middleware.AuthMiddleware(bookLoanController.ListByUserId))
 
-	router.GET("/swagger/*any", swaggerHandler)
-	router.GET("/swaggser.json", func(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-		fmt.Println("gil")
-		http.ServeFile(w, r, "./docs/sd.json")
-	})
-	router.GET("/swagger.json", func(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-		fmt.Println("Serving Swagger JSON")
-		http.ServeFile(w, r, "./docs/sd.json")
-	})
+	// Penalties
+	router.POST("/api/penalty/pay/:id", middleware.AuthMiddleware(middleware.RoleMiddleware("admin", penaltiesController.PayPenalties)))
 
 	router.PanicHandler = exception.ErrorHandler
 	return router
-}
-func swaggerHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	http.ServeFile(w, r, "./docs/sd.json")
 }

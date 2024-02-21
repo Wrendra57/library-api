@@ -41,16 +41,13 @@ func customErrorMessage(err validator.FieldError) string {
 
 func validationErrors(writer http.ResponseWriter, request *http.Request, err interface{}) bool {
 	_, ok := err.(validator.ValidationErrors)
-	// fmt.Println(exception)
+
 	if ok {
 
 		writer.Header().Set("Content-Type", "application/json")
 		writer.WriteHeader(http.StatusBadRequest)
 
 		for _, e := range err.(validator.ValidationErrors) {
-			// fmt.Println("ajlaskd")
-			// fmt.Println("Field:", e.Field())
-			// fmt.Println("Error:", customErrorMessage(e))
 
 			webResponse := webresponse.ResponseApi{
 				Code:   http.StatusBadRequest,
@@ -110,7 +107,7 @@ func customEror(writer http.ResponseWriter, request *http.Request, err interface
 func internalServerError(writer http.ResponseWriter, request *http.Request, err interface{}) {
 	writer.Header().Set("Content-Type", "application/json")
 	writer.WriteHeader(http.StatusInternalServerError)
-	// fmt.Println("err")
+
 	webResponse := webresponse.ResponseApi{
 		Code:   http.StatusInternalServerError,
 		Status: "INTERNAL SERVER ERROR",

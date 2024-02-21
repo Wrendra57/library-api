@@ -30,9 +30,11 @@ func InitializedServer() *http.Server {
 		service.NewUserService,
 		service.NewBookService,
 		service.NewBookLoanService,
+		service.NewPenaltiesService,
 		controller.NewUserController,
 		controller.NewBookController,
 		controller.NewBookLoanController,
+		controller.NewPenaltiesController,
 		app.NewRouter,
 		NewServer,
 	)

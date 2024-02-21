@@ -47,6 +47,8 @@ func ToBookLoanResponse(loan domain.BookLoan) webresponse.BookLoanResponseComple
 }
 
 func ToBookLoanResponseComplete(l domain.BookLoan, b webresponse.BookResponseComplete, u domain.User, a domain.User, p domain.Penalties) webresponse.BookLoanResponseComplete2 {
+	user := ToUserResponse(u)
+	admin := ToUserResponse(a)
 	return webresponse.BookLoanResponseComplete2{
 		Loan_id:       l.Loan_id,
 		Checkout_date: l.Checkout_date,
@@ -54,8 +56,8 @@ func ToBookLoanResponseComplete(l domain.BookLoan, b webresponse.BookResponseCom
 		Return_date:   l.Return_date,
 		Status:        l.Status,
 		Book_id:       b,
-		User_id:       u,
-		Admin_id:      a,
+		User_id:       user,
+		Admin_id:      admin,
 		Penalties:     p,
 		Created_at:    l.Created_at,
 		Updated_at:    l.Updated_at,

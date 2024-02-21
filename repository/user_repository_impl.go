@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"fmt"
 	"strconv"
 
 	"github.com/be/perpustakaan/helper"
@@ -25,7 +24,7 @@ func (r *UserRepositoryImpl) Create(ctx context.Context, tx *sql.Tx, user domain
 	result, err := tx.ExecContext(ctx, SQL, user.Name, user.Email, user.Password, user.Level, user.Is_enabled, user.Gender, user.Telp, user.Birthdate, user.Address, user.Foto, user.Batas)
 	helper.PanicIfError(err)
 
-	// fmt.Println(result)
+	 
 	id, err := result.LastInsertId()
 	helper.PanicIfError(err)
 	user.User_id = int(id)
@@ -38,14 +37,13 @@ func (repository *UserRepositoryImpl) FindByEmail(ctx context.Context, tx *sql.T
 	rows, err := tx.QueryContext(ctx, SQL, email)
 	helper.PanicIfError(err)
 	defer rows.Close()
-	// fmt.Println("repo findbyemail")
-	// fmt.Println(rows)
+ 
 
 	user := domain.User{}
 	if rows.Next() {
 
 		err := rows.Scan(&user.User_id, &user.Name, &user.Email, &user.Password, &user.Level, &user.Is_enabled, &user.Gender, &user.Telp, &user.Birthdate, &user.Address, &user.Foto, &user.Batas, &user.Created_at, &user.Updated_at, &user.Deleted_at)
-		// fmt.Println(err)
+	 
 		helper.PanicIfError(err)
 		return user, nil
 	} else {
@@ -87,7 +85,6 @@ func (r *UserRepositoryImpl) FindAll(ctx context.Context, tx *sql.Tx) []domain.U
 	}
 	return users
 
-	// panic("sad")
 }
 
 func (r *UserRepositoryImpl) Update(ctx context.Context, tx *sql.Tx, id int, user webrequest.UpdateUserRequest) webrequest.UpdateUserRequest {
@@ -142,12 +139,10 @@ func (r *UserRepositoryImpl) Update(ctx context.Context, tx *sql.Tx, id int, use
 	SQL += " WHERE user_id = ?"
 	args = append(args, id)
 
-	fmt.Println(SQL)
 	_, err := tx.Exec(SQL, args...)
 	if err != nil {
 		panic(err)
 	}
-	// fmt.Println(result)
 
 	return user
 }

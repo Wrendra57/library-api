@@ -59,16 +59,3 @@ type UpdateUserRequest struct {
 	UrlFoto       string       `json:"url_foto"`
 	UpdateForRent string       `json:"update_for_rent"`
 }
-
-// type UpdateUserRequest2 struct {
-// 	Name sql.NullString `json:"name"`
-// 	Email sql.NullString  `json:"email"`
-// 	Gender sql.NullString ` json:"gender"`
-// 	Telp sql.NullString `json:"telp"`
-// 	Birthdate sql.NullTime `json:"birthdate"`
-// 	Address sql.NullString `json:"address"`
-// 	Foto sql.NullByte `json:"foto"`
-// 	Level sql.NullTime `json:"level"`
-// 	Is_enabled sql.NullBool `json:"is_enabled"`
-// 	Batas sql.NullInt64 	`json:"batas"`
-// }

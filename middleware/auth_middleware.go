@@ -2,7 +2,6 @@ package middleware
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"strings"
 
@@ -26,7 +25,7 @@ func AuthMiddleware(next httprouter.Handle) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		authHeader := r.Header.Get("Authorization")
 		if authHeader == "" {
-			fmt.Println("authHeader is empty")
+
 			webResponse := webresponse.ResponseApi{
 				Code:   http.StatusUnauthorized,
 				Status: "unauthorized",
@@ -39,7 +38,7 @@ func AuthMiddleware(next httprouter.Handle) httprouter.Handle {
 
 		// Check if the Authorization header has the Bearer prefix
 		if !strings.HasPrefix(authHeader, "Bearer ") {
-			fmt.Println("authHeade not has the Bearer prefix")
+
 			webResponse := webresponse.ResponseApi{
 				Code:   http.StatusUnauthorized,
 				Status: "unauthorized",
@@ -56,8 +55,7 @@ func AuthMiddleware(next httprouter.Handle) httprouter.Handle {
 		result, err := helper.ParseJWT(tokenString)
 
 		if err != nil {
-			fmt.Println("error parsing===>")
-			// fmt.Println(err.Error())
+
 			webResponse := webresponse.ResponseApi{
 				Code:   http.StatusUnauthorized,
 				Status: err.Error(),
@@ -83,7 +81,7 @@ func RoleMiddleware(allowedRole string, next httprouter.Handle) httprouter.Handl
 		// Retrieve the parsed token from the request context
 		userRole, ok := r.Context().Value("level").(string)
 		if !ok {
-			fmt.Println("error get role from request context")
+
 			webResponse := webresponse.ResponseApi{
 				Code:   http.StatusUnauthorized,
 				Status: "unauthorized",

@@ -71,7 +71,7 @@ func TestLoginSucces(t *testing.T) {
 	bodyResp, _ := io.ReadAll(response.Body)
 	var responseBody map[string]interface{}
 	json.Unmarshal(bodyResp, &responseBody)
-	fmt.Println(responseBody)
+	 
 	assert.Equal(t, 200, int(responseBody["code"].(float64)))
 	assert.Equal(t, "OK", responseBody["status"])
 	assert.NotNil(t, responseBody["data"], err)
@@ -133,7 +133,7 @@ func TestLoginEmptyEmail(t *testing.T) {
 	var responseBody map[string]interface{}
 	json.Unmarshal(bodyResp, &responseBody)
 
-	// fmt.Println(responseBody)
+ 
 
 	assert.Equal(t, 400, int(responseBody["code"].(float64)))
 	assert.Equal(t, "Email is required", responseBody["status"])
@@ -196,7 +196,7 @@ func TestLoginNotValidEmail(t *testing.T) {
 	var responseBody map[string]interface{}
 	json.Unmarshal(bodyResp, &responseBody)
 
-	// fmt.Println(responseBody)
+ 
 
 	assert.Equal(t, 400, int(responseBody["code"].(float64)))
 	assert.Equal(t, "Email must be a valid email address", responseBody["status"])
@@ -259,7 +259,7 @@ func TestLoginEmptyPassword(t *testing.T) {
 	var responseBody map[string]interface{}
 	json.Unmarshal(bodyResp, &responseBody)
 
-	// fmt.Println(responseBody)
+	 
 
 	assert.Equal(t, 400, int(responseBody["code"].(float64)))
 	assert.Equal(t, "Password is required", responseBody["status"])
@@ -323,7 +323,7 @@ func TestLoginNotFoundEmail(t *testing.T) {
 	var responseBody map[string]interface{}
 	json.Unmarshal(bodyResp, &responseBody)
 
-	// fmt.Println(responseBody)
+	 
 
 	assert.Equal(t, 400, int(responseBody["code"].(float64)))
 	assert.Equal(t, "Email test@gmail.com not found", responseBody["status"])
@@ -386,7 +386,7 @@ func TestLoginWrongPassword(t *testing.T) {
 	var responseBody map[string]interface{}
 	json.Unmarshal(bodyResp, &responseBody)
 
-	// fmt.Println(responseBody)
+	 
 
 	assert.Equal(t, 400, int(responseBody["code"].(float64)))
 	assert.Equal(t, "Password not match", responseBody["status"])

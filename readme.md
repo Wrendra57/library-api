@@ -24,7 +24,7 @@ Clone this repo
 
 Create Mysql database with name `library`.
 
-Running file `query.sql` in mysql.
+Running file `queryDb.sql` in mysql.
 
 
 
@@ -56,10 +56,16 @@ Start the server
 
 ## Documentation API
 
-- Import file `Documentation_postmant.json` ke Postman App
-- 
+- Import file `Library.postman_collection.json` ke Postman App
+- Swagger file `documentation_api.yaml`
 
 ## User Seed
+- superadmin
+
+```bash
+  email: superadmin@gmail.com
+  password: 1234
+``` 
 - admin
 
 ```bash
