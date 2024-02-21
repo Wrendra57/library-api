@@ -18,7 +18,7 @@ func NewServer(router *httprouter.Router) *http.Server {
 }
 
 func main() {
-	fmt.Println("server running")
+	fmt.Println("server running ===>> 127.0.0.1:8001")
 	server := InitializedServer()
 
 	err := server.ListenAndServe()
