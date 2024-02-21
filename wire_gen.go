@@ -34,7 +34,11 @@ func InitializedServer() *http.Server {
 	rakRepository := repository.NewRakRepository()
 	bookService := service.NewBookService(bookRepository, db, validate, cloudinary, categoryBookRepository, authorRepository, publisherRepository, userRepository, rakRepository)
 	bookController := controller.NewBookController(bookService)
-	router := app.NewRouter(userController, bookController)
+	bookLoanRepository := repository.NewBookLoanRepository()
+	penaltiesRepository := repository.NewPenaltiesRepository()
+	bookLoanService := service.NewBookLoanService(bookLoanRepository, userRepository, bookRepository, penaltiesRepository, db, validate, cloudinary)
+	bookLoanController := controller.NewBookLoanController(bookLoanService)
+	router := app.NewRouter(userController, bookController, bookLoanController)
 	server := NewServer(router)
 	return server
 }

@@ -18,13 +18,10 @@ func NewServer(router *httprouter.Router) *http.Server {
 }
 
 func main() {
-	fmt.Println("server running")
+	fmt.Println("server running ===>> 127.0.0.1:8001")
 	server := InitializedServer()
-	fmt.Println("jalan2")
 
 	err := server.ListenAndServe()
-	fmt.Println("jalan3")
-	fmt.Println(err)
 
 	helper.PanicIfError(err)
 }

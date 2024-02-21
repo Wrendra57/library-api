@@ -22,4 +22,5 @@ type Book struct {
 	Created_at       time.Time
 	Updated_at       time.Time
 	Deleted_at       sql.NullTime
+	UpdateForRent    string
 }

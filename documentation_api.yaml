@@ -233,23 +233,23 @@ paths:
                     type: string
                   data:
                     "$ref": "#/components/schemas/Book"
-  "/books?limit={limit}&offset={offset}":
+  "/books":
     get:
       summary: Get list Book
       description: get list book 
       parameters:
-        - in: path
-          name: limit
+        - name: limit
+          in: query
+          description: Number of items to return
           required: false
-          description: banyak buku
           schema:
-            type: number
-        - in: path
-          name: offset
+            type: integer
+        - name: offset
+          in: query
+          description: Number of items to skip
           required: false
-          description: offset buku
           schema:
-            type: number
+            type: integer
       tags:
         - Book API
       responses:
@@ -268,29 +268,29 @@ paths:
                     type: array
                     items:
                       "$ref": "#/components/schemas/Book"
-  "/books/search?search={search}&limit={limit}&offset={offset}":
+  "/books/search":
     get:
       summary: search book
       description: search book by title / category / author / publisher
       parameters:
-        - in: path
-          name: limit
+        - name: search
+          in: query
+          description: Search query
           required: false
-          description: banyak buku
-          schema:
-            type: number
-        - in: path
-          name: offset
-          required: false
-          description: offset buku
-          schema:
-            type: number
-        - in: path
-          name: search
-          required: false
-          description: search
           schema:
             type: string
+        - name: limit
+          in: query
+          description: Number of items to return
+          required: false
+          schema:
+            type: integer
+        - name: offset
+          in: query
+          description: Number of items to skip
+          required: false
+          schema:
+            type: integer
       tags:
         - Book API
       responses:

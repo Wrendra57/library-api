@@ -28,8 +28,12 @@ func customErrorMessage(err validator.FieldError) string {
 		return fmt.Sprintf("%s is required", err.Field())
 	case "min":
 		return fmt.Sprintf("%s must be at least %s characters long", err.Field(), err.Param())
+	case "max":
+		return fmt.Sprintf("%s must be maximum %s characters long", err.Field(), err.Param())
 	case "email":
 		return fmt.Sprintf("%s must be a valid email address", err.Field())
+	case "oneof":
+		return fmt.Sprintf("%s must be a %s", err.Field(), err.Param())
 	default:
 		return fmt.Sprintf("Validation error on field %s with tag %s", err.Field(), err.Tag())
 	}
@@ -44,9 +48,9 @@ func validationErrors(writer http.ResponseWriter, request *http.Request, err int
 		writer.WriteHeader(http.StatusBadRequest)
 
 		for _, e := range err.(validator.ValidationErrors) {
-			fmt.Println("ajlaskd")
-			fmt.Println("Field:", e.Field())
-			fmt.Println("Error:", customErrorMessage(e))
+			// fmt.Println("ajlaskd")
+			// fmt.Println("Field:", e.Field())
+			// fmt.Println("Error:", customErrorMessage(e))
 
 			webResponse := webresponse.ResponseApi{
 				Code:   http.StatusBadRequest,
@@ -106,7 +110,7 @@ func customEror(writer http.ResponseWriter, request *http.Request, err interface
 func internalServerError(writer http.ResponseWriter, request *http.Request, err interface{}) {
 	writer.Header().Set("Content-Type", "application/json")
 	writer.WriteHeader(http.StatusInternalServerError)
-	fmt.Println("err")
+	// fmt.Println("err")
 	webResponse := webresponse.ResponseApi{
 		Code:   http.StatusInternalServerError,
 		Status: "INTERNAL SERVER ERROR",

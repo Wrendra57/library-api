@@ -42,7 +42,7 @@ func AuthMiddleware(next httprouter.Handle) httprouter.Handle {
 			fmt.Println("authHeade not has the Bearer prefix")
 			webResponse := webresponse.ResponseApi{
 				Code:   http.StatusUnauthorized,
-				Status: "unauthorized",
+				Status: "unauthorized2",
 				Data:   nil,
 			}
 			helper.WriteToResponseBody(w, webResponse)
@@ -54,13 +54,13 @@ func AuthMiddleware(next httprouter.Handle) httprouter.Handle {
 
 		// Parse the token
 		result, err := helper.ParseJWT(tokenString)
-
+		fmt.Println(int(result["id"].(float64)))
+		fmt.Println(result)
 		if err != nil {
-			fmt.Println("error parsing===>")
-			// fmt.Println(err.Error())
+			fmt.Println("error parsing")
 			webResponse := webresponse.ResponseApi{
 				Code:   http.StatusUnauthorized,
-				Status: err.Error(),
+				Status: "unauthorized3",
 				Data:   nil,
 			}
 			helper.WriteToResponseBody(w, webResponse)
@@ -69,9 +69,9 @@ func AuthMiddleware(next httprouter.Handle) httprouter.Handle {
 
 		// Attach the parsed token to the request context for later use
 		ctx := context.WithValue(r.Context(), "token", tokenString)
-		ctx = context.WithValue(ctx, "id", result.Id)
-		ctx = context.WithValue(ctx, "email", result.Email)
-		ctx = context.WithValue(ctx, "level", result.Level)
+		ctx = context.WithValue(ctx, "id", int(result["id"].(float64)))
+		ctx = context.WithValue(ctx, "email", result["email"].(string))
+		ctx = context.WithValue(ctx, "level", result["level"].(string))
 
 		next(w, r.WithContext(ctx), p)
 		// next(w, r.WithContext(ctx), p)
@@ -86,7 +86,7 @@ func RoleMiddleware(allowedRole string, next httprouter.Handle) httprouter.Handl
 			fmt.Println("error get role from request context")
 			webResponse := webresponse.ResponseApi{
 				Code:   http.StatusUnauthorized,
-				Status: "unauthorized",
+				Status: "unauthorized4",
 				Data:   nil,
 			}
 			helper.WriteToResponseBody(w, webResponse)
@@ -102,7 +102,7 @@ func RoleMiddleware(allowedRole string, next httprouter.Handle) httprouter.Handl
 		if userRole != allowedRole {
 			webResponse := webresponse.ResponseApi{
 				Code:   http.StatusUnauthorized,
-				Status: "unauthorized",
+				Status: "unauthorized5",
 				Data:   nil,
 			}
 			helper.WriteToResponseBody(w, webResponse)

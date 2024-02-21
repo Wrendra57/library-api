@@ -52,7 +52,7 @@ func (c *BookControllerImpl) CreateBook(writer http.ResponseWriter, request *htt
 	createRequest.Column = request.FormValue("column")
 	createRequest.Rows = request.FormValue("rows")
 	createRequest.Price = request.FormValue("price")
-	fmt.Println("control jalan")
+	// fmt.Println("control jalan")
 	createBook := c.BookService.CreateBook(request.Context(), createRequest)
 
 	webRespone := webresponse.ResponseApi{
@@ -70,7 +70,7 @@ func (c *BookControllerImpl) FindBookById(writer http.ResponseWriter, request *h
 	if err != nil {
 		panic(exception.CustomEror{Code: 400, Error: "id must be number"})
 	}
-	fmt.Println("s")
+	// fmt.Println("s")
 	book := c.BookService.FindBookById(request.Context(), id)
 
 	webresponse := webresponse.ResponseApi{
@@ -122,7 +122,7 @@ func (c *BookControllerImpl) UpdateBook(writer http.ResponseWriter, request *htt
 	id := konversi.StrToInt(params.ByName("id"), "book id")
 	// helper.PanicIfError(err)
 
-	fmt.Println("s")
+	// fmt.Println("s")
 
 	updateRequest := webrequest.UpdateBookRequest{}
 
