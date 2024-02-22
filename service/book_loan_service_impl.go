@@ -160,7 +160,7 @@ func (s *BookLoanServiceImpl) ReturnBookLoan(ctx context.Context, request webreq
 	updateBookLoan.Return_date.Valid = true
 
 	penalty := domain.Penalties{}
-	if compare.CompareTime(timeNow.Format(time.RFC3339), bookLoan.Due_date.Format(time.RFC3339)) == false {
+	if compare.CompareTime(timeNow.Format(time.RFC3339), bookLoan.Due_date.Format(time.RFC3339)) {
 		updateBookLoan.Status = "returned"
 		bookLoan.Status = "returned"
 
