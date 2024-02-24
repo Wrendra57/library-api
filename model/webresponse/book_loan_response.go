@@ -26,9 +26,9 @@ type BookLoanResponseComplete2 struct {
 	Due_date      time.Time            `json:"due_date"`
 	Return_date   sql.NullTime         `json:"return_date"`
 	Status        string               `json:"status"`
-	Book_id       BookResponseComplete `json:"book_id"`
+	Book_id       BookResponseComplete `json:"book"`
 	User_id       UserResponse         `json:"user"`
-	Admin_id      UserResponse         `json:"admin_id"`
+	Admin_id      UserResponse         `json:"admin"`
 	Penalties     domain.Penalties     `json:"penalties"`
 	Created_at    time.Time            `json:"created_at"`
 	Updated_at    time.Time            `json:"updated_at"`

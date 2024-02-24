@@ -33,6 +33,18 @@ paths:
                     type: string
                   data:
                     "$ref": "#/components/schemas/User"
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/BadRequest"
+        '500' :
+          description: internal serrver error
+          content:
+            application/json:
+              schema: 
+                "$ref": "#/components/schemas/InternalServerError"
   "/users/login":
     post:
       summary: login user
@@ -47,8 +59,10 @@ paths:
               properties:
                 email:
                   type: string
+                  example: "xxxx@gmail.com"
                 password:
                   type: string
+                  example: "1234"
       responses:
         '200':
           description: Success Login User
@@ -66,6 +80,18 @@ paths:
                     properties:
                       token:
                         type: string
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/BadRequest"
+        '500' :
+          description: internal serrver error
+          content:
+            application/json:
+              schema: 
+                "$ref": "#/components/schemas/InternalServerError"
       
   "/user":
     get:
@@ -89,6 +115,18 @@ paths:
                     type: string
                   data:
                     "$ref": "#/components/schemas/User"
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/BadRequest"
+        '500' :
+          description: internal serrver error
+          content:
+            application/json:
+              schema: 
+                "$ref": "#/components/schemas/InternalServerError"
   "/users":
     get:
       summary: Get list user
@@ -113,6 +151,18 @@ paths:
                     type: array
                     items:
                       "$ref": "#/components/schemas/User"
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/BadRequest"
+        '500' :
+          description: internal serrver error
+          content:
+            application/json:
+              schema: 
+                "$ref": "#/components/schemas/InternalServerError"
   "/user/{id}":
     get:
       summary: get user by id
@@ -142,6 +192,18 @@ paths:
                     type: string
                   data:
                     "$ref": "#/components/schemas/User"
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/BadRequest"
+        '500' :
+          description: internal serrver error
+          content:
+            application/json:
+              schema: 
+                "$ref": "#/components/schemas/InternalServerError"
     put:
       summary: update user
       description: update user
@@ -177,6 +239,18 @@ paths:
                     type: string
                   data:
                     type: boolean
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/BadRequest"
+        '500' :
+          description: internal serrver error
+          content:
+            application/json:
+              schema: 
+                "$ref": "#/components/schemas/InternalServerError"
 
   "/book" :
     post: 
@@ -206,6 +280,18 @@ paths:
                     type: string
                   data:
                     "$ref": "#/components/schemas/Book"
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/BadRequest"
+        '500' :
+          description: internal serrver error
+          content:
+            application/json:
+              schema: 
+                "$ref": "#/components/schemas/InternalServerError"
   "/book/{id}":
     get:
       summary: get book by id
@@ -233,6 +319,18 @@ paths:
                     type: string
                   data:
                     "$ref": "#/components/schemas/Book"
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/BadRequest"
+        '500' :
+          description: internal serrver error
+          content:
+            application/json:
+              schema: 
+                "$ref": "#/components/schemas/InternalServerError"
   "/books":
     get:
       summary: Get list Book
@@ -268,6 +366,18 @@ paths:
                     type: array
                     items:
                       "$ref": "#/components/schemas/Book"
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/BadRequest"
+        '500' :
+          description: internal serrver error
+          content:
+            application/json:
+              schema: 
+                "$ref": "#/components/schemas/InternalServerError"
   "/books/search":
     get:
       summary: search book
@@ -309,6 +419,18 @@ paths:
                     type: array
                     items:
                       "$ref": "#/components/schemas/Book"
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/BadRequest"
+        '500' :
+          description: internal serrver error
+          content:
+            application/json:
+              schema: 
+                "$ref": "#/components/schemas/InternalServerError"
   "/books/{id}":
     put:
       summary: update books
@@ -346,6 +468,18 @@ paths:
                     type: string
                   data: 
                     type: boolean
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/BadRequest"
+        '500' :
+          description: internal serrver error
+          content:
+            application/json:
+              schema: 
+                "$ref": "#/components/schemas/InternalServerError"
     delete: 
       summary: update books
       description: only for member level
@@ -375,6 +509,292 @@ paths:
                     type: string
                   data: 
                     type: number
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/BadRequest"
+        '500' :
+          description: internal serrver error
+          content:
+            application/json:
+              schema: 
+                "$ref": "#/components/schemas/InternalServerError"
+  "/loan":
+    post:
+      summary: Create Book loan
+      tags:
+        - Book Loan API
+      security:
+        - BearerAuth: []
+      requestBody:
+        required : true
+        content: 
+          application/json:
+            schema: 
+              type: object
+              properties:
+                book_id:
+                  type: integer
+                user_id:
+                  type: integer
+      responses:
+        '200':
+            description: Success Create Book Loan
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    code:
+                      type: number
+                      example: 200
+                    status:
+                      type: string
+                      example: "OK"
+                    data:
+                      "$ref": "#/components/schemas/Loan"
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/BadRequest"
+        '500' :
+          description: internal serrver error
+          content:
+            application/json:
+              schema: 
+                "$ref": "#/components/schemas/InternalServerError"
+    get:
+      summary: List Book loan
+      tags:
+        - Book Loan API
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: limit
+          in: query
+          description: Number of items to return
+          required: false
+          schema:
+            type: integer
+        - name: offset
+          in: query
+          description: Number of items to skip
+          required: false
+          schema:
+            type: integer
+      responses:
+        '200':
+            description: Success List Book Loan
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    code:
+                      type: number
+                      example: 200
+                    status:
+                      type: string
+                      example: "OK"
+                    data:
+                      type: array
+                      items:
+                        "$ref": "#/components/schemas/ListLoan"
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/BadRequest"
+        '500' :
+          description: internal serrver error
+          content:
+            application/json:
+              schema: 
+                "$ref": "#/components/schemas/InternalServerError"   
+  "/loan/return":
+    post: 
+      summary: Return Book loan
+      tags:
+        - Book Loan API
+      security:
+        - BearerAuth: []
+      requestBody:
+        required : true
+        content: 
+          application/json:
+            schema: 
+              type: object
+              properties:
+                book_id:
+                  type: integer
+                  nullable: true
+                user_id:
+                  type: integer
+                  nullable: true
+                loan_id:
+                  type: integer
+                  nullable: true
+      responses:
+        '200':
+            description: Success Create Book Loan
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    code:
+                      type: number
+                    status:
+                      type: string
+                    data:
+                      "$ref": "#/components/schemas/ReturnLoan"
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/BadRequest"
+        '500' :
+          description: internal serrver error
+          content:
+            application/json:
+              schema: 
+                "$ref": "#/components/schemas/InternalServerError"           
+  "/loan/{id}":
+    get:
+      summary: get book loan by id
+      description: get book loan by id
+      tags:
+        - Book Loan API
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: book loan id
+          schema:
+            type: number
+      responses:
+        '200':
+          description: Success Get Book Loan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: number
+                  status:
+                    type: string
+                  data:
+                    "$ref": "#/components/schemas/ListLoan"
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/BadRequest"
+        '500' :
+          description: internal serrver error
+          content:
+            application/json:
+              schema: 
+                "$ref": "#/components/schemas/InternalServerError"    
+  "/loans/mylist":
+    get:
+      summary: Get List Book loan by user token
+      tags:
+        - Book Loan API
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+            description: Success Get List Book Loan By user token
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    code:
+                      type: number
+                    status:
+                      type: string
+                    data:
+                      type: array
+                      items:
+                        "$ref": "#/components/schemas/ListLoan"
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/BadRequest"
+        '500' :
+          description: internal serrver error
+          content:
+            application/json:
+              schema: 
+                "$ref": "#/components/schemas/InternalServerError"    
+  "/penalty/pay/{id}":
+    post: 
+      summary: Pay Penalties
+      tags:
+        - Penalties
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: penalties id
+          schema:
+            type: number
+      security:
+        - BearerAuth: []
+      requestBody:
+        required : true
+        content: 
+          application/json:
+            schema: 
+              type: object
+              properties:
+                payment_status:
+                  type: string
+                  example: "paid"
+                penalty_amount:
+                  type: integer
+                  example: 2000
+      responses:
+        '200':
+            description: Success Create Book Loan
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    code:
+                      type: number
+                    status:
+                      type: string
+                    data:
+                      "$ref": "#/components/schemas/Penalties"
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/BadRequest"
+        '500' :
+          description: internal serrver error
+          content:
+            application/json:
+              schema: 
+                "$ref": "#/components/schemas/InternalServerError"
+
 components:
   securitySchemes:
     BearerAuth:
@@ -386,18 +806,26 @@ components:
       properties:
         name :
           type: string
+          example: "budi name"
         email :
           type : string
+          format: email
+          example: "xxxx@gmail.com"
         password: 
           type: string
+          example: "1234"
         gender:
           type: string
+          example: "male"
         telp:
           type: string
+          example: "6282132222"
         birthdate:
           type: string
+          example: "2000-06-22"
         address:
           type: string
+          example: "jl xxxx No 3"
         foto:
           type: string
           format: binary
@@ -406,97 +834,475 @@ components:
       properties:
         user_id: 
           type: number
+          example: 123
         name :
           type: string
+          example: "budi name"
         email :
           type : string
-        password: 
-          type: string
+          format: email
+          example: "user@gmail.com"
         gender:
           type: string
+          example: "male"
         telp:
           type: string
+          example: "+62821364xx"
         birthdate:
           type: string
+          example: "2006-01-02T00:00:00Z"
         address:
           type: string
+          example: "jl xxxxxxx No 12"
         foto:
           type: string
+          example: "https://images.com"
         batas:
           type: number
+          example: 2
         is_enabled:
           type: boolean
+          example: true
         level:
           type: string
+          example: "member"
     CreateBook:
       type: object
       properties:
         title:
           type: string
+          example: "This book"
         category:
           type: string
+          example: "fiksi"
         author:
           type: string
+          example: "alan"
         publisher:
           type: string
+          example: "pt xxx"
         isbn:
           type: string
+          example: "2-de-2222"
         page_count:
           type: string
+          example: "300"
         stock:
           type: string
+          example: "3"
         publication_year:
           type: string
+          example: "2015"
         foto:
           type: string
           format: binary
         rak:
           type: string
+          example: "A1"
         column:
           type: string
+          example: "1"
         rows:
           type: string
+          example: "2"
         price:
           type: string
+          example: "200000"
     Book:
       type: object
       properties: 
         book_id:
-          type: string
+          type: integer
+          example: 33
         title:
           type: string
+          example: "this a book"
         category:
           type: string
+          example: "fiksi"
         author:
           type: string
+          example: "alan"
         publisher:
           type: string
+          example: pt xxxx
         isbn:
           type: string
+          example: "2-ccc-dw34"
         page_count:
-          type: string
+          type: integer
+          example: 300
         stock:
-          type: string
+          type: integer
+          example: 3
         publication:
-          type: string
+          type: integer
+          example: 2015
         foto:
           type: string
+          example: "https://images.com"
         rak:
           type: string
+          example: "A1"
         column:
-          type: string
+          type: integer
+          example: 2
         rows_rak:
-          type: string
+          type: integer
+          example: 2
         price:
-          type: string
+          type: integer
+          example: 2000
         created_at:
           type: string
+          example: "2006-01-02T00:00:00Z"
         updated_at:
           type: string
-       
-        
-    
-        
+          example: "2006-01-02T00:00:00Z"
+        deleted_at:
+          type: object
+          properties:
+            Time: 
+              type: string
+              example: "2006-01-02T00:00:00Z"
+            Valid: 
+              type: boolean
+              example: true
+    Loan:
+      type: object
+      properties:
+        loan_id:
+          type: integer
+          example: 2
+        checkout_date:
+          type: string
+          example: "2024-02-27T05:57:28Z"
+        due_date:
+          type: string
+          example: "2006-01-02T00:00:00Z"
+        return_date:
+          type: object
+          properties:
+            Time:
+              type: string
+              example: "2024-02-27T05:57:28Z"
+            Valid:
+              type: boolean
+              example: true
+        status:
+          type: string
+          example: "returned"
+        book_id:
+          type: integer
+          example: 2
+          
+        user_id:
+          type: integer
+          example: 2
+        admin_id:
+          type: integer
+          example: 2
+        created_at:
+          type: string
+          format: date
+          example: "2024-02-22T11:55:21Z"
+        updated_at:
+          type: string
+          format: date
+          example: "2024-02-27T05:57:28Z"
+    Penalties:
+      type: object
+      properties:
+        penalty_id:
+          type: integer
+          example: 1
+        loan_id: 
+          type: integer
+          example: 1
+        penalty_amount:
+          type: integer
+          example: 10000
+        reason:
+          type: string
+          example: "late"
+        payment_status:
+          type: string
+          example: "paid"
+        due_date:
+          type: string
+          example: "2024-02-27T05:57:28Z"
+        admin_id:
+          type: integer
+          example: 1
+        created_at:
+          type: string
+          example: "2024-02-27T05:57:28Z"
+        updated_at:
+          type: string
+          example: "2024-02-27T05:57:28Z"
+    ReturnLoan:
+      type: object
+      properties:
+        loan_id:
+          type: integer
+        checkout_date:
+          type: string
+        due_date:
+          type: string
+        return_date:
+          type: object
+          properties:
+            Time:
+              type: string
+            Valid:
+              type: boolean
+        status:
+          type: string
+        book:
+          type: object
+          properties:
+            book_id:
+              type: integer
+              example: 1
+            title:
+              type: string
+              example: "this a book"
+            category:
+              type: string
+              example: "fiksi"
+            author:
+              type: string
+              example: "xxxxxx"
+            publisher:
+              type: string
+              example: "xxxxxx"
+            isbn:
+              type: string
+              example: "xxxxxx"
+            page_count:
+              type: integer
+              example: 200
+            stock:
+              type: integer
+              example: 3
+            publication:
+              type: integer
+              example: 2008
+            foto:
+              type: string
+              example: "https://images.com"
+            rak:
+              type: string
+              example: "A1"
+            column:
+              type: integer
+              example: 1
+            rows_rak:
+              type: integer
+              example: 2
+            price:
+              type: integer
+              example: 300000
+            admin: 
+              type: string
+              example: "admin 1"
+            created_at:
+              type: string
+              example: "2024-02-22T11:55:21Z"
+            updated_at:
+              type: string
+              example: "2024-02-22T11:55:21Z"
+            deleted_at:
+              type: object
+              properties:
+                Time:
+                  type: string
+                Valid:
+                  type: boolean
+        user:
+          type: object
+          properties:
+            user_id: 
+              type: number
+              example: 123
+            name :
+              type: string
+              example: "budi name"
+            email :
+              type : string
+              format: email
+              example: "user@gmail.com"
+            gender:
+              type: string
+              example: "male"
+            telp:
+              type: string
+              example: "+62821364xx"
+            birthdate:
+              type: string
+              example: "2006-01-02T00:00:00Z"
+            address:
+              type: string
+              example: "jl xxxxxxx No 12"
+            foto:
+              type: string
+              example: "https://images.com"
+            batas:
+              type: number
+              example: 2
+            is_enabled:
+              type: boolean
+              example: true
+            level:
+              type: string
+              example: "member"
+        admin:
+          type: object
+          properties:
+            user_id: 
+              type: number
+              example: 123
+            name :
+              type: string
+              example: "budi name"
+            email :
+              type : string
+              format: email
+              example: "admin@gmail.com"
+            gender:
+              type: string
+              example: "male"
+            telp:
+              type: string
+              example: "+62821364xx"
+            birthdate:
+              type: string
+              example: "2006-01-02T00:00:00Z"
+            address:
+              type: string
+              example: "jl xxxxxxx No 12"
+            foto:
+              type: string
+              example: "https://images.com"
+            batas:
+              type: number
+              example: 2
+            is_enabled:
+              type: boolean
+              example: true
+            level:
+              type: string
+              example: "member"
+        penalties: 
+          type: object
+          "$ref": "#/components/schemas/Penalties"
+            
+        created_at:
+          type: string
+          format: date
+        updated_at:
+          type: string
+          format: date
+    BadRequest:
+      type: object
+      properties:
+        code:
+          type: number
+          example: 400
+        status:
+          type: string
+          example: "messages of erro"
+        data:
+          type: string
+          example: null
+          x-nullable: true
+    ListLoan:
+      type: object
+      properties:
+        loan_id:
+          type: integer
+          example: 11
+        checkout_date:
+          type: string
+          example: "2024-02-24T06:04:02Z"
+        due_date: 
+          type: string
+          format: date
+          example: "2024-02-24T06:04:02Z"
+        return_date:
+          type: object
+          properties:
+            Time:
+              type: string
+            Valid:
+              type: boolean
+        status: 
+          type: string
+          example: "overdue"
+        book: 
+          type: object
+          properties:
+            book_id:
+              type: integer
+              example: 2
+            title:
+              type: string
+              example: "this a book"
+            foto:
+              type: string
+              example: "https://images.com"
+        user:
+          type: object
+          properties:
+            name: 
+              type: string
+              example: "budie member"
+            foto:
+              type: string
+              example: "https://images.com"
+            user_id:
+              type: integer
+              example: 3
+        admin_id:
+          type: integer
+          example: 2
+        penalties:
+          type: object
+          properties:
+            penalty_id:
+              type: integer
+              example: 3
+            penalty_amount:
+              type: integer
+              example: 30000
+            payment_status:
+              type: string
+              example: "paid"
+            due_date:
+              type: string
+              example: "2024-02-27T05:57:28Z"
+            reason:
+              type: string
+              example: "late"
+        created_at:
+          type: string
+          format: date
+        updated_at:
+          type: string
+          format: date
+    InternalServerError:
+      type: object
+      properties:
+        code:
+          type: number
+          example: 500
+        status:
+          type: string
+          example: "internal server error"
+        data:
+          type: string
+          example: null
+          x-nullable: true
         
         
         

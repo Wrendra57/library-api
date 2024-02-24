@@ -8,6 +8,7 @@ import (
 	"github.com/be/perpustakaan/helper"
 	"github.com/be/perpustakaan/model/domain"
 	"github.com/be/perpustakaan/model/webrequest"
+	"github.com/be/perpustakaan/model/webresponse"
 	"github.com/be/perpustakaan/repository"
 	"github.com/go-playground/validator/v10"
 )
@@ -28,7 +29,7 @@ func NewPenaltiesService(userRepository repository.UserRepository, penaltiesRepo
 	}
 }
 
-func (s *PenaltiesServiceImpl) PayPenalties(ctx context.Context, r webrequest.UpdatePenaltiesRequest, id int) domain.Penalties {
+func (s *PenaltiesServiceImpl) PayPenalties(ctx context.Context, r webrequest.UpdatePenaltiesRequest, id int) webresponse.PenaltiesResponse {
 	admin_id, ok := ctx.Value("id").(int)
 
 	if !ok {
@@ -67,5 +68,6 @@ func (s *PenaltiesServiceImpl) PayPenalties(ctx context.Context, r webrequest.Up
 	p.Admin_id = update.Admin_id
 	p.Payment_status = update.Payment_status
 
-	return p
+	result := helper.ToPenaltiesResponse(p)
+	return result
 }
