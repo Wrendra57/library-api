@@ -96,3 +96,17 @@ func ToDetailBookLoanResponseComplete(bl domain.BookLoan, b webresponse.BookResp
 		Updated_at:    bl.Updated_at,
 	}
 }
+
+func ToPenaltiesResponse(p domain.Penalties) webresponse.PenaltiesResponse {
+	return webresponse.PenaltiesResponse{
+		Penalty_id:     p.Penalty_id,
+		Loan_id:        p.Loan_id,
+		Penalty_amount: p.Penalty_amount,
+		Payment_status: p.Payment_status,
+		Due_date:       p.Due_date,
+		Reason:         p.Reason,
+		Admin_id:       p.Admin_id,
+		Created_at:     p.Created_at,
+		Updated_at:     p.Updated_at,
+	}
+}

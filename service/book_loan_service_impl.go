@@ -173,7 +173,7 @@ func (s *BookLoanServiceImpl) ReturnBookLoan(ctx context.Context, request webreq
 		penalty.Loan_id = bookLoan.Loan_id
 		penalty.Payment_status = "unpaid"
 		duration := math.Ceil(timeNow.Sub(bookLoan.Due_date).Hours() / 24)
-		penalty.Penalty_amount = 5_000 * int(duration)
+		penalty.Penalty_amount = int(math.Abs(5_000 * duration))
 		penalty.Reason = "late"
 
 		penalty = s.Penalties.Create(ctx, tx, penalty)
@@ -189,7 +189,8 @@ func (s *BookLoanServiceImpl) ReturnBookLoan(ctx context.Context, request webreq
 		Stock:         book.Stock + 1,
 		UpdateForRent: "true",
 	})
-
+	book.Stock = book.Stock + 1
+	user.Batas = user.Batas + 1
 	res := helper.ToBookLoanResponseComplete(bookLoan, book, user, admin, penalty)
 	return res
 }
@@ -245,7 +246,7 @@ func (s *BookLoanServiceImpl) FindById(ctx context.Context, id int) webresponse.
 	helper.PanicIfError(err)
 
 	penalty, err := s.Penalties.FindById(ctx, tx, bookLoan.Loan_id)
-
+	helper.PanicIfError(err)
 	res := helper.ToDetailBookLoanResponseComplete(bookLoan, book, user, penalty)
 	return res
 	// panic("s")
